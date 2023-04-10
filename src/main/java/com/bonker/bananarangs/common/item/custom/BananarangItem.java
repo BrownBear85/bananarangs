@@ -1,6 +1,7 @@
 package com.bonker.bananarangs.common.item.custom;
 
 import com.bonker.bananarangs.common.entity.BananarangEntity;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -17,7 +18,9 @@ public class BananarangItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        BananarangEntity.shootFromEntity(player, stack, 0.2F);
+        if (!level.isClientSide) {
+            BananarangEntity.shootFromEntity((ServerLevel) level, player, stack, 0.2F);
+        }
         return InteractionResultHolder.success(stack);
     }
 }

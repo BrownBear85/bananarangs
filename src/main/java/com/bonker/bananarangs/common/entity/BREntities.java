@@ -15,5 +15,7 @@ public class BREntities {
     public static final RegistryObject<EntityType<BananarangEntity>> BANANARANG = ENTITY_TYPES.register("bananarang",
             () -> EntityType.Builder.of(BananarangEntity::new, MobCategory.MISC)
                     .sized(0.65F, 0.65F)
+                    .updateInterval(1)
+                    .setShouldReceiveVelocityUpdates(true)
                     .build(new ResourceLocation(BananarangsMod.MODID, "bananarang").toString()));
 }
