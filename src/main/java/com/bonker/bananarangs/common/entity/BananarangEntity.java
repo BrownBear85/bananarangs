@@ -130,6 +130,11 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
             level.destroyBlock(hitResult.getBlockPos(), true);
     }
 
+    @Override
+    public boolean shouldRenderAtSqrDistance(double distance) {
+        return distance < 4096;
+    }
+
     private boolean shouldReturn() {
         Vec3 delta = getDeltaMovement();
         return Math.abs(delta.x) < speedThreshold && Math.abs(delta.y) < speedThreshold && Math.abs(delta.z) < speedThreshold;
