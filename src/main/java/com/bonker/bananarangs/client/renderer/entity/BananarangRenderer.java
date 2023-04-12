@@ -1,5 +1,6 @@
-package com.bonker.bananarangs.common.entity;
+package com.bonker.bananarangs.client.renderer.entity;
 
+import com.bonker.bananarangs.common.entity.BananarangEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,11 +23,12 @@ public class BananarangRenderer<T extends BananarangEntity> extends ThrownItemRe
     @Override
     public void render(T entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
-        poseStack.translate(0, 0.5, 0);
-        poseStack.mulPose(Axis.XP.rotationDegrees(90));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(entity.getXRot()));
-        poseStack.mulPose(Axis.XP.rotationDegrees(entity.getYRot()));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(((entity.tickCount + partialTicks) * (!entity.isReturning() ? -degreesPerTick : degreesPerTick)) % 360));
+        poseStack.translate(0, 0.25, 0);                                      // raise model to ~ center of hitbox
+        poseStack.mulPose(Axis.XP.rotationDegrees(90));                       // flatten model
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180 - entity.getYRot()));   // rotate to facing rotation
+        poseStack.mulPose(Axis.XP.rotationDegrees(entity.getXRot()));         // tilt to facing rotation
+        poseStack.mulPose(Axis.ZP.rotationDegrees(                            // spin!!!
+                ((entity.tickCount + partialTicks) * degreesPerTick) % 360)); // calculate spin
         this.itemRenderer.renderStatic(entity.getItem(), ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, buffer, entity.level, entity.getId());
         poseStack.popPose();
     }

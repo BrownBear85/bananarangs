@@ -1,7 +1,7 @@
 package com.bonker.bananarangs.common.entity;
 
 import com.bonker.bananarangs.common.item.BRItems;
-import net.minecraft.Util;
+import com.bonker.bananarangs.util.MathUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -9,7 +9,10 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -21,14 +24,18 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.ForgeEventFactory;
 
 public class BananarangEntity extends Projectile implements ItemSupplier {
 
     private static final EntityDataAccessor<ItemStack> DATA_ITEM_STACK = SynchedEntityData.defineId(BananarangEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<Boolean> DATA_RETURNING = SynchedEntityData.defineId(BananarangEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> DATA_AGE = SynchedEntityData.defineId(BananarangEntity.class, EntityDataSerializers.INT);
+    private static final double deceleration = 0.96;
+    private static final double speedThreshold = 0.15;
+    private static final double maxSpeed = 2.0;
 
     private int age = 0;
 
@@ -36,85 +43,110 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         super(entityType, level);
     }
 
-    public static BananarangEntity shootFromEntity(ServerLevel level, LivingEntity shooter, ItemStack stack, double power) {
-        BananarangEntity bananarang = BREntities.BANANARANG.get().spawn(level, null, (entity) -> {
+    public static void shootFromEntity(ServerLevel level, LivingEntity shooter, ItemStack stack, double power, Vec3 delta) {
+        BREntities.BANANARANG.get().spawn(level, null, (entity) -> {
+            entity.setOwner(shooter);
             entity.setItem(stack);
-            entity.setPos(shooter.getEyePosition().subtract(0, 0.3, 0));
-            Vec3 angle = shooter.getLookAngle();
-            entity.setDeltaMovement(angle.multiply(power, power, power));
-        }, BlockPos.ZERO, MobSpawnType.SPAWN_EGG, false, false);
-        if (bananarang != null) {
-            bananarang.setRot(shooter.getXRot(), shooter.getYRot());
-        }
-        return bananarang;
+            entity.setPos(shooter.getEyePosition().subtract(0, 0.2, 0));
+            entity.setRot(shooter.getXRot(), shooter.getYRot());
+            entity.setDeltaMovement(shooter.getLookAngle()
+                    .add(delta.multiply(3, 1, 3))
+                    .multiply(power, power, power));
+        }, BlockPos.ZERO, MobSpawnType.COMMAND, false, false);
     }
 
     @Override
     public void tick() {
         super.tick();
 
-
-        HitResult hitresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
-        boolean flag = false;
-        if (hitresult.getType() == HitResult.Type.BLOCK) {
-            BlockPos blockpos = ((BlockHitResult)hitresult).getBlockPos();
-            BlockState blockstate = this.level.getBlockState(blockpos);
-            if (blockstate.is(Blocks.NETHER_PORTAL)) {
-                this.handleInsidePortal(blockpos);
-                flag = true;
-            } else if (blockstate.is(Blocks.END_GATEWAY)) {
-                BlockEntity blockentity = this.level.getBlockEntity(blockpos);
-                if (blockentity instanceof TheEndGatewayBlockEntity && TheEndGatewayBlockEntity.canEntityTeleport(this)) {
-                    TheEndGatewayBlockEntity.teleportEntity(this.level, blockpos, blockstate, this, (TheEndGatewayBlockEntity)blockentity);
+        Entity owner = getOwner();
+        if (owner != null) {
+            Vec3 targetPos = owner.getEyePosition().subtract(0, 1.0, 0);
+            if (this.isReturning()) {                           // if it is coming back,
+                if (shouldDrop(targetPos)) {                    // and it's close to the player,
+                    if (owner instanceof ServerPlayer player) { //
+                        if (player.addItem(getItem())) {        // then give  it back to the player
+                            discard();                          // and delete the entity
+                        } else {                                //
+                            drop();                             // or drop it as an item
+                        }
+                        player.getCooldowns().addCooldown(BRItems.BANANARANG.get(), 20);
+                    }
                 }
 
-                flag = true;
+                this.setDeltaMovement(this.getDeltaMovement().scale(0.95D).add( // stolen from ThrownTrident.java
+                        targetPos.subtract(this.position())                     // calculate the trajectory to the player and
+                        .normalize().scale(0.05D)));                            // set the delta movement to it
+            } else {
+                decelerate();
+                if (shouldReturn()) {
+                    setReturning(true);
+                }
             }
         }
 
-        if (hitresult.getType() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
-            this.onHit(hitresult);
+        Vec3 posOld = position();
+        setPos(posOld.add(getDeltaMovement()));
+
+        HitResult hitResult = ProjectileUtil.getHitResult(this, this::canHitEntity);
+        if (hitResult.getType() != HitResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, hitResult)) {
+            onHit(hitResult);
         }
 
-        this.checkInsideBlocks();
-        Vec3 vec3 = this.getDeltaMovement();
-        double d2 = this.getX() + vec3.x;
-        double d0 = this.getY() + vec3.y;
-        double d1 = this.getZ() + vec3.z;
-        this.updateRotation();
-        float f;
-        if (this.isInWater()) {
-            for(int i = 0; i < 4; ++i) {
-                float f1 = 0.25F;
-                this.level.addParticle(ParticleTypes.BUBBLE, d2 - vec3.x * 0.25D, d0 - vec3.y * 0.25D, d1 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
-            }
+        setPos(posOld);
+        move(MoverType.SELF, getDeltaMovement());
 
-            f = 0.8F;
-        } else {
-            f = 0.99F;
-        }
-
-        this.setDeltaMovement(vec3.scale((double)f));
-
-        this.setPos(d2, d0, d1);
-
-//        if (isReturning()) {
-//
-//        }
-//
-//        this.move(MoverType.SELF, getDeltaMovement());
-
-        if (++age >= 100) {
+        if (++age >= 200) {
             drop();
         }
     }
 
+    @Override
+    protected void onHit(HitResult hitResult) {
+//        if (!isReturning()) {
+            super.onHit(hitResult);
+            setReturning(true);
+//        }
+    }
+
+    @Override
+    protected void onHitEntity(EntityHitResult hitResult) {
+        Entity entity = hitResult.getEntity();
+        Entity owner = getOwner();
+        if (entity != owner) {
+            entity.hurt(damageSources().mobProjectile(this, owner instanceof LivingEntity livingOwner ? livingOwner : null), 5.0F);
+            double knockbackResistance = entity instanceof LivingEntity livingEntity ? Math.max(0, 1 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)) : 0;
+            Vec3 delta = getDeltaMovement().multiply(1, 0, 1).normalize().scale(0.1 * knockbackResistance);
+            if (delta.lengthSqr() > 0) {
+                entity.push(delta.x, 0.01, delta.z);
+            }
+        }
+    }
+
+    @Override
+    protected void onHitBlock(BlockHitResult hitResult) {
+        super.onHitBlock(hitResult);
+        if (!level.isClientSide)
+            level.destroyBlock(hitResult.getBlockPos(), true);
+    }
+
+    private boolean shouldReturn() {
+        Vec3 delta = getDeltaMovement();
+        return Math.abs(delta.x) < speedThreshold && Math.abs(delta.y) < speedThreshold && Math.abs(delta.z) < speedThreshold;
+    }
+
+    private boolean shouldDrop(Vec3 targetPos) {
+        Entity owner = getOwner();
+        return owner != null && position().distanceToSqr(targetPos) < 2.0;
+    }
+
+    private void decelerate() {
+        setDeltaMovement(MathUtil.clamp(getDeltaMovement().multiply(deceleration, deceleration, deceleration), -maxSpeed, maxSpeed));
+    }
+
     private void drop() {
         if (!level.isClientSide) {
-            EntityType.ITEM.spawn((ServerLevel) level, (CompoundTag) null, (itemEntity) -> {
-                itemEntity.setItem(getItem());
-                itemEntity.setPos(position());
-            }, BlockPos.ZERO, MobSpawnType.COMMAND, false, false);
+            spawnAtLocation(getItem());
         }
         discard();
     }
@@ -123,25 +155,26 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     protected void defineSynchedData() {
         entityData.define(DATA_ITEM_STACK, ItemStack.EMPTY);
         entityData.define(DATA_RETURNING, false);
-        entityData.define(DATA_AGE, 0);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
         setItem(ItemStack.of(tag.getCompound("Item")));
         setReturning(tag.getBoolean("returning"));
-        age = tag.getInt("Age");
+        age = tag.getInt("age");
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
         tag.put("Item", getItem().save(new CompoundTag()));
         tag.putBoolean("returning", isReturning());
-        tag.putInt("Age", age);
+        tag.putInt("age", age);
     }
 
     protected Item getDefaultItem() {
-        return BRItems.BANANA_RANG.get();
+        return BRItems.BANANARANG.get();
     }
 
     public ItemStack getItem() {
@@ -161,13 +194,5 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
 
     public void setReturning(boolean returning) {
         entityData.set(DATA_RETURNING, returning);
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 }

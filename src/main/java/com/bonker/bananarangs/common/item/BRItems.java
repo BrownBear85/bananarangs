@@ -11,7 +11,8 @@ public class BRItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, BananarangsMod.MODID);
 
 
-    public static final RegistryObject<Item> BANANA_RANG = ITEMS.register("bananarang", () -> new BananarangItem(props()));
+    public static final RegistryObject<Item> BANANARANG = ITEMS.register("bananarang",
+            () -> new BananarangItem(props().stacksTo(1)));
 
 
     public static Item.Properties props() {

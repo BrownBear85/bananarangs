@@ -2,6 +2,7 @@ package com.bonker.bananarangs;
 
 import com.bonker.bananarangs.common.entity.BREntities;
 import com.bonker.bananarangs.common.item.BRItems;
+import com.bonker.bananarangs.common.networking.BRNetworking;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -16,6 +17,8 @@ public class BananarangsMod {
 
     public BananarangsMod() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        BRNetworking.register();
 
         BRItems.ITEMS.register(bus);
         BREntities.ENTITY_TYPES.register(bus);
