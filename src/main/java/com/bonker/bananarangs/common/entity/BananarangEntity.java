@@ -1,27 +1,25 @@
 package com.bonker.bananarangs.common.entity;
 
+import com.bonker.bananarangs.common.damage.BRDamageSources;
 import com.bonker.bananarangs.common.item.BRItems;
+import com.bonker.bananarangs.common.item.custom.BananarangItem;
 import com.bonker.bananarangs.util.MathUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -38,6 +36,15 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     private static final double maxSpeed = 2.0;
 
     private int age = 0;
+
+    private boolean hasPickaxe = false;
+    private ItemStack attachedItem = ItemStack.EMPTY;
+    private float pickaxeLevel = -1;
+    private float pickaxeEfficiency = 0;
+    private boolean flaming = false;
+    private boolean piercing = false;
+    private boolean fling = false;
+    private int damageUpgrade = 0;
 
     public BananarangEntity(EntityType<? extends BananarangEntity> entityType, Level level) {
         super(entityType, level);
@@ -78,7 +85,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
                         targetPos.subtract(this.position())                     // calculate the trajectory to the player and
                         .normalize().scale(0.05D)));                            // set the delta movement to it
             } else {
-                decelerate();
+                scaleDelta(deceleration);
                 if (shouldReturn()) {
                     setReturning(true);
                 }
@@ -102,37 +109,70 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     }
 
     @Override
-    protected void onHit(HitResult hitResult) {
-//        if (!isReturning()) {
-            super.onHit(hitResult);
-            setReturning(true);
-//        }
-    }
-
-    @Override
     protected void onHitEntity(EntityHitResult hitResult) {
         Entity entity = hitResult.getEntity();
         Entity owner = getOwner();
         if (entity != owner) {
-            entity.hurt(damageSources().mobProjectile(this, owner instanceof LivingEntity livingOwner ? livingOwner : null), 5.0F);
-            double knockbackResistance = entity instanceof LivingEntity livingEntity ? Math.max(0, 1 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)) : 0;
-            Vec3 delta = getDeltaMovement().multiply(1, 0, 1).normalize().scale(0.1 * knockbackResistance);
-            if (delta.lengthSqr() > 0) {
-                entity.push(delta.x, 0.01, delta.z);
+            float damage = 6.0F + 3.0F * damageUpgrade; // each damage upgrade increases damage by 1.5 heart
+            if (piercing || hasPickaxe) { // nerf piercing damage for balance and decrease damage if it has a pickaxe
+                damage *= 0.5;
             }
+            entity.hurt(new BRDamageSources.BananarangDamageSource(piercing, this, getOwner()), damage);
+            Vec3 delta = getDeltaMovement().multiply(1, 0, 1).normalize(); // remove the vertical delta of the bananarang
+            if (fling) {
+                delta = delta.scale(2); // knockback is 5 times more if fling
+            } else { // fling doesn't care about knockback resistance, so only calculate it if fling is false
+                double knockbackResistance = entity instanceof LivingEntity livingEntity ? Math.max(0, 1 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)) : 0;
+                delta = delta.scale(0.1 * knockbackResistance);
+            }
+            entity.push(delta.x, fling ? 0.5 : 0.01, delta.z); // if fling, fling the entity in the air, otherwise do normal vertical knockback
+            if (isOnFire()) {
+                entity.setSecondsOnFire(5);
+            }
+            setReturning(true);
         }
     }
 
     @Override
     protected void onHitBlock(BlockHitResult hitResult) {
         super.onHitBlock(hitResult);
-        if (!level.isClientSide)
-            level.destroyBlock(hitResult.getBlockPos(), true);
+        if (hasPickaxe) {
+            BlockPos pos = hitResult.getBlockPos();
+            BlockState state = level.getBlockState(pos);
+            double destroySpeed = state.getDestroySpeed(level, pos);
+            if (canMine(state) && destroySpeed <= 5 + pickaxeEfficiency * 10) {
+                if (!level.isClientSide) {
+                    level.destroyBlock(hitResult.getBlockPos(), true);
+                }
+            } else {
+                setDeltaMovement(Vec3.ZERO);
+            }
+            scaleDelta(1 - 1 / (pickaxeEfficiency + 1)); //TODO figure out how to incorporate block strength to make destroying stronger blocks slower
+        }
     }
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
         return distance < 4096;
+    }
+
+    public void setUpgrades(ItemStack bananarang) {
+        hasPickaxe = BananarangItem.hasPickaxe(bananarang);
+        attachedItem = BananarangItem.getAttachedItem(bananarang);
+        pickaxeLevel = BananarangItem.pickaxeLevel(bananarang);
+        pickaxeEfficiency = BananarangItem.pickaxeEfficiency(bananarang);
+        flaming = BananarangItem.flaming(bananarang);
+        if (flaming) setSecondsOnFire(100);
+        piercing = BananarangItem.piercing(bananarang);
+        fling = BananarangItem.fling(bananarang);
+        damageUpgrade = BananarangItem.damageUpgrade(bananarang);
+    }
+
+    private boolean canMine(BlockState state) {
+        if (attachedItem.getItem() instanceof DiggerItem diggerItem) {
+            return diggerItem.isCorrectToolForDrops(attachedItem, state);
+        }
+        return false;
     }
 
     private boolean shouldReturn() {
@@ -145,8 +185,8 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         return owner != null && position().distanceToSqr(targetPos) < 2.0;
     }
 
-    private void decelerate() {
-        setDeltaMovement(MathUtil.clamp(getDeltaMovement().multiply(deceleration, deceleration, deceleration), -maxSpeed, maxSpeed));
+    private void scaleDelta(double factor) {
+        setDeltaMovement(MathUtil.clamp(getDeltaMovement().multiply(factor, factor, factor), -maxSpeed, maxSpeed));
     }
 
     private void drop() {
@@ -190,6 +230,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     public void setItem(ItemStack stack) {
         if (!stack.is(getDefaultItem()) || stack.hasTag() || stack.getCount() > 0) {
             entityData.set(DATA_ITEM_STACK, stack.copy());
+            setUpgrades(stack);
         }
     }
 

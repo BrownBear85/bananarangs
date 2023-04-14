@@ -1,3 +1,7 @@
 {
-  "item.bananarangs.bananarang": "Bananarang"
+  "item.bananarangs.bananarang": "Bananarang",
+  "death.attack.bananarang": "%1$s was peeled by %2$s",
+  "death.attack.bananarang.item": "%1$s was peeled by %2$s using %3$s",
+  "death.attack.piercingBananarang": "%1$s was poked by %2$s",
+  "death.attack.piercingBananarang.item": "%1$s was poked by %2$s using %3$s"
 }

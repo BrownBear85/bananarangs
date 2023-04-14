@@ -1,6 +1,6 @@
 package com.bonker.bananarangs.common.networking;
 
-import com.bonker.bananarangs.BananarangsMod;
+import com.bonker.bananarangs.Bananarangs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -16,7 +16,7 @@ public class BRNetworking {
 
     public static void register() {
         INSTANCE = NetworkRegistry.ChannelBuilder
-                .named(new ResourceLocation(BananarangsMod.MODID, "packets"))
+                .named(new ResourceLocation(Bananarangs.MODID, "packets"))
                 .networkProtocolVersion(() -> "1.0")
                 .clientAcceptedVersions(s -> true)
                 .serverAcceptedVersions(s -> true)

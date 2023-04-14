@@ -1,6 +1,6 @@
 package com.bonker.bananarangs.client;
 
-import com.bonker.bananarangs.BananarangsMod;
+import com.bonker.bananarangs.Bananarangs;
 import com.bonker.bananarangs.common.entity.BREntities;
 import com.bonker.bananarangs.client.renderer.entity.BananarangRenderer;
 import com.bonker.bananarangs.common.item.BRItems;
@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 
 public class ClientEvents {
 
-    @Mod.EventBusSubscriber(modid = BananarangsMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @Mod.EventBusSubscriber(modid = Bananarangs.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
 
         @SubscribeEvent
@@ -29,7 +29,7 @@ public class ClientEvents {
         }
     }
 
-    @Mod.EventBusSubscriber(modid = BananarangsMod.MODID, value = Dist.CLIENT)
+    @Mod.EventBusSubscriber(modid = Bananarangs.MODID, value = Dist.CLIENT)
     public static class ClientForgeEvents {
 
     }

@@ -9,13 +9,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
-@Mod(BananarangsMod.MODID)
-public class BananarangsMod {
+@Mod(Bananarangs.MODID)
+public class Bananarangs {
 
     public static final String MODID = "bananarangs";
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public BananarangsMod() {
+    public Bananarangs() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         BRNetworking.register();
