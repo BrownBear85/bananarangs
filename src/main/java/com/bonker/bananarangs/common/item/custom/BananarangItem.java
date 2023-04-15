@@ -28,19 +28,12 @@ public class BananarangItem extends Item {
         return InteractionResultHolder.success(player.getItemInHand(hand));
     }
 
-    public static boolean hasPickaxe(ItemStack bananarang) {
-        return bananarang.getOrCreateTag().getBoolean("hasPickaxe");
-    }
-
     public static ItemStack getAttachedItem(ItemStack bananarang) {
         return ItemStack.of(bananarang.getOrCreateTag().getCompound("attachedItem"));
     }
 
-    public static int pickaxeLevel(ItemStack bananarang) {
-        if (getAttachedItem(bananarang).getItem() instanceof TieredItem tieredItem) {
-            return TierSortingRegistry.getSortedTiers().indexOf(tieredItem.getTier());
-        }
-        return -1;
+    public static boolean hasPickaxe(ItemStack bananarang) {
+        return getAttachedItem(bananarang).getItem() instanceof PickaxeItem;
     }
 
     public static int pickaxeEfficiency(ItemStack bananarang) {

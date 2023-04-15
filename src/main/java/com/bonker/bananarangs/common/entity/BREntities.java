@@ -11,11 +11,10 @@ import net.minecraftforge.registries.RegistryObject;
 public class BREntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Bananarangs.MODID);
 
-
     public static final RegistryObject<EntityType<BananarangEntity>> BANANARANG = ENTITY_TYPES.register("bananarang",
             () -> EntityType.Builder.of(BananarangEntity::new, MobCategory.MISC)
                     .sized(0.3F, 0.3F)
-                    .updateInterval(4)
+                    .updateInterval(1)
                     .clientTrackingRange(8)
                     .setShouldReceiveVelocityUpdates(true)
                     .build(new ResourceLocation(Bananarangs.MODID, "bananarang").toString()));

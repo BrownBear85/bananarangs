@@ -19,13 +19,18 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.event.ForgeEventFactory;
+
+import java.util.List;
+import java.util.function.Supplier;
 
 public class BananarangEntity extends Projectile implements ItemSupplier {
 
@@ -39,7 +44,6 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
 
     private boolean hasPickaxe = false;
     private ItemStack attachedItem = ItemStack.EMPTY;
-    private float pickaxeLevel = -1;
     private float pickaxeEfficiency = 0;
     private boolean flaming = false;
     private boolean piercing = false;
@@ -86,14 +90,25 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
                         .normalize().scale(0.05D)));                            // set the delta movement to it
             } else {
                 scaleDelta(deceleration);
-                if (shouldReturn()) {
-                    setReturning(true);
-                }
+                updateReturning();
             }
         }
 
         Vec3 posOld = position();
         setPos(posOld.add(getDeltaMovement()));
+
+        if (hasPickaxe && !isReturning()) {
+            BlockPos.betweenClosedStream(getBoundingBox()).forEach((pos) -> { // for each block inside the hitbox
+                BlockState state = level.getBlockState(pos);
+                if (canMine(state, pos)) {
+                    level.destroyBlock(pos, true);
+                    scaleDelta(Math.max(0, 1 -                        // this is a fraction. a "default block" is stone block (1.5 destroy time)
+                            state.getDestroySpeed(level, pos) / 1.5 / // how many "default blocks' worth" of destroy time have you used
+                                    (pickaxeEfficiency + 1)));        // the total amount of "default blocks" you can destroy (1 block with no eff. and 6 with eff. 5)
+                }
+                updateReturning();
+            });
+        }
 
         HitResult hitResult = ProjectileUtil.getHitResult(this, this::canHitEntity);
         if (hitResult.getType() != HitResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, hitResult)) {
@@ -118,36 +133,22 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
                 damage *= 0.5;
             }
             entity.hurt(new BRDamageSources.BananarangDamageSource(piercing, this, getOwner()), damage);
-            Vec3 delta = getDeltaMovement().multiply(1, 0, 1).normalize(); // remove the vertical delta of the bananarang
-            if (fling) {
-                delta = delta.scale(2); // knockback is 5 times more if fling
-            } else { // fling doesn't care about knockback resistance, so only calculate it if fling is false
-                double knockbackResistance = entity instanceof LivingEntity livingEntity ? Math.max(0, 1 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)) : 0;
-                delta = delta.scale(0.1 * knockbackResistance);
-            }
-            entity.push(delta.x, fling ? 0.5 : 0.01, delta.z); // if fling, fling the entity in the air, otherwise do normal vertical knockback
-            if (isOnFire()) {
-                entity.setSecondsOnFire(5);
-            }
-            setReturning(true);
-        }
-    }
-
-    @Override
-    protected void onHitBlock(BlockHitResult hitResult) {
-        super.onHitBlock(hitResult);
-        if (hasPickaxe) {
-            BlockPos pos = hitResult.getBlockPos();
-            BlockState state = level.getBlockState(pos);
-            double destroySpeed = state.getDestroySpeed(level, pos);
-            if (canMine(state) && destroySpeed <= 5 + pickaxeEfficiency * 10) {
-                if (!level.isClientSide) {
-                    level.destroyBlock(hitResult.getBlockPos(), true);
+            if (!piercing) { // if it pierces, it doesn't knockback
+                Vec3 delta = getDeltaMovement().multiply(1, 0, 1).normalize(); // remove the vertical delta of the bananarang
+                if (fling) {
+                    delta = delta.scale(2); // knockback is 5 times more if fling
+                } else { // fling doesn't care about knockback resistance, so only calculate it if fling is false
+                    double knockbackResistance = entity instanceof LivingEntity livingEntity ? Math.max(0, 1 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)) : 0;
+                    delta = delta.scale(0.1 * knockbackResistance);
                 }
-            } else {
-                setDeltaMovement(Vec3.ZERO);
+                entity.push(delta.x, fling ? 0.5 : 0.01, delta.z); // if fling, fling the entity in the air, otherwise do normal vertical knockback
+                if (isOnFire()) {
+                    entity.setSecondsOnFire(5);
+                }
             }
-            scaleDelta(1 - 1 / (pickaxeEfficiency + 1)); //TODO figure out how to incorporate block strength to make destroying stronger blocks slower
+            if (!piercing) {
+                setReturning(true);
+            }
         }
     }
 
@@ -159,7 +160,6 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     public void setUpgrades(ItemStack bananarang) {
         hasPickaxe = BananarangItem.hasPickaxe(bananarang);
         attachedItem = BananarangItem.getAttachedItem(bananarang);
-        pickaxeLevel = BananarangItem.pickaxeLevel(bananarang);
         pickaxeEfficiency = BananarangItem.pickaxeEfficiency(bananarang);
         flaming = BananarangItem.flaming(bananarang);
         if (flaming) setSecondsOnFire(100);
@@ -168,9 +168,13 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         damageUpgrade = BananarangItem.damageUpgrade(bananarang);
     }
 
-    private boolean canMine(BlockState state) {
+    private boolean canMine(BlockState state, BlockPos pos) {
         if (attachedItem.getItem() instanceof DiggerItem diggerItem) {
-            return diggerItem.isCorrectToolForDrops(attachedItem, state);
+            double destroySpeed = state.getDestroySpeed(level, pos);
+            return destroySpeed >= 0 && // can't break unbreakable blocks with strength -1
+                    state.getBlock().hasCollision && // can't break blocks it can't collide with
+                    TierSortingRegistry.isCorrectTierForDrops(diggerItem.getTier(), state) && // can't break blocks that its tool can't mine
+                    destroySpeed <= 5 + pickaxeEfficiency * 10;
         }
         return false;
     }
@@ -178,6 +182,10 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     private boolean shouldReturn() {
         Vec3 delta = getDeltaMovement();
         return Math.abs(delta.x) < speedThreshold && Math.abs(delta.y) < speedThreshold && Math.abs(delta.z) < speedThreshold;
+    }
+
+    private void updateReturning() {
+        if (shouldReturn()) setReturning(true);
     }
 
     private boolean shouldDrop(Vec3 targetPos) {
