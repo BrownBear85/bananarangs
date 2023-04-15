@@ -43,6 +43,5 @@ public class BananarangC2SPacket {
         ItemStack stack = sender.getItemInHand(hand);
         BananarangEntity.shootFromEntity(level, sender, Util.make(stack.copy(), stack1 -> stack1.setCount(1)), 0.8F, delta);
         stack.shrink(1);
-        sender.getCooldowns().addCooldown(BRItems.BANANARANG.get(), 20);
     }
 }
