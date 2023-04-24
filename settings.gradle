@@ -3,6 +3,12 @@ pluginManagement {
         gradlePluginPortal()
         maven { url = 'https://maven.minecraftforge.net/' }
     }
+
+    pluginManagement {
+        repositories {
+            maven { url = 'https://maven.parchmentmc.org' }
+        }
+    }
 }
 
 rootProject.name = 'bananarangs'
