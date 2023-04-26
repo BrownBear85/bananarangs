@@ -1,15 +1,18 @@
 package com.bonker.bananarangs.client;
 
 import com.bonker.bananarangs.Bananarangs;
+import com.bonker.bananarangs.client.renderer.BananarangBEWLR;
 import com.bonker.bananarangs.common.entity.BREntities;
-import com.bonker.bananarangs.client.renderer.entity.BananarangRenderer;
-import com.bonker.bananarangs.common.item.BRItems;
-import net.minecraft.world.item.CreativeModeTabs;
+import com.bonker.bananarangs.client.renderer.BananarangEntityRenderer;
+import com.bonker.bananarangs.common.item.custom.UpgradeItem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class ClientEvents {
 
@@ -17,15 +20,22 @@ public class ClientEvents {
     public static class ClientModEvents {
 
         @SubscribeEvent
-        public static void buildCreativeTabs(CreativeModeTabEvent.BuildContents event) {
-            if (event.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-                event.accept(BRItems.BANANARANG);
+        public static void clientSetup(FMLClientSetupEvent event) {
+            Minecraft minecraft = Minecraft.getInstance();
+            BananarangBEWLR.INSTANCE = new BananarangBEWLR(minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
+        }
+
+        @SubscribeEvent
+        public static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
+            event.register(BananarangBEWLR.BASE_LOC);
+            for (ResourceLocation model : UpgradeItem.UPGRADE_MODEL_MAP.values()) {
+                event.register(model);
             }
         }
 
         @SubscribeEvent
         public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(BREntities.BANANARANG.get(), BananarangRenderer::new);
+            event.registerEntityRenderer(BREntities.BANANARANG.get(), BananarangEntityRenderer::new);
         }
     }
 

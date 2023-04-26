@@ -1,7 +1,17 @@
 {
+  "item_group.bananarangs.tab": "Bananarangs",
   "item.bananarangs.bananarang": "Bananarang",
+  "entity.bananarangs.bananarang": "Bananarang",
   "death.attack.bananarang": "%1$s was peeled by %2$s",
   "death.attack.bananarang.item": "%1$s was peeled by %2$s using %3$s",
   "death.attack.piercingBananarang": "%1$s was poked by %2$s",
-  "death.attack.piercingBananarang.item": "%1$s was poked by %2$s using %3$s"
+  "death.attack.piercingBananarang.item": "%1$s was poked by %2$s using %3$s",
+  "item.bananarangs.blank_upgrade": "Blank Upgrade",
+  "item.bananarangs.damage_upgrade_1": "Damage Upgrade",
+  "item.bananarangs.damage_upgrade_2": "Increased Damage Upgrade",
+  "item.bananarangs.damage_upgrade_3": "Extreme Damage Upgrade",
+  "item.bananarangs.flaming_upgrade": "Flaming Upgrade",
+  "item.bananarangs.fling_upgrade": "Fling Upgrade",
+  "item.bananarangs.piercing_upgrade": "Piercing Upgrade",
+  "item.bananarangs.pickaxe_upgrade": "Pickaxe Upgrade"
 }

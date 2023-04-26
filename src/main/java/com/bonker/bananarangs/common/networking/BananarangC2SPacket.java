@@ -41,7 +41,7 @@ public class BananarangC2SPacket {
         if (sender == null) return;
         ServerLevel level = sender.getLevel();
         ItemStack stack = sender.getItemInHand(hand);
-        BananarangEntity.shootFromEntity(level, sender, Util.make(stack.copy(), stack1 -> stack1.setCount(1)), 0.8F, delta);
+        BananarangEntity.shootFromEntity(level, sender, Util.make(stack.copy(), stack1 -> stack1.setCount(1)), 1.0F, delta);
         stack.shrink(1);
     }
 }

@@ -1,4 +1,4 @@
-package com.bonker.bananarangs.client.renderer.entity;
+package com.bonker.bananarangs.client.renderer;
 
 import com.bonker.bananarangs.common.entity.BananarangEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -10,12 +10,12 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 
-public class BananarangRenderer<T extends BananarangEntity> extends ThrownItemRenderer<T> {
+public class BananarangEntityRenderer<T extends BananarangEntity> extends ThrownItemRenderer<T> {
 
     private static final int degreesPerTick = 24;
     private final ItemRenderer itemRenderer;
 
-    public BananarangRenderer(EntityRendererProvider.Context context) {
+    public BananarangEntityRenderer(EntityRendererProvider.Context context) {
         super(context, 1.0F, false);
         this.itemRenderer = context.getItemRenderer();
     }

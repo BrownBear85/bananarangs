@@ -61,7 +61,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
             entity.setPos(shooter.getEyePosition().subtract(0, 0.2, 0));
             entity.setRot(shooter.getXRot(), shooter.getYRot());
             entity.setDeltaMovement(shooter.getLookAngle()
-                    .add(delta.multiply(3, 1, 3))
+                    .add(delta.multiply(1, 0.4, 1))
                     .multiply(power, power, power));
         }, BlockPos.ZERO, MobSpawnType.COMMAND, false, false);
     }
@@ -161,10 +161,10 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         hasPickaxe = BananarangItem.hasPickaxe(bananarang);
         attachedItem = BananarangItem.getAttachedItem(bananarang);
         pickaxeEfficiency = BananarangItem.pickaxeEfficiency(bananarang);
-        flaming = BananarangItem.flaming(bananarang);
+        flaming = BananarangItem.hasUpgrade(bananarang, "flaming");
         if (flaming) setSecondsOnFire(100);
-        piercing = BananarangItem.piercing(bananarang);
-        fling = BananarangItem.fling(bananarang);
+        piercing = BananarangItem.hasUpgrade(bananarang, "piercing");
+        fling = BananarangItem.hasUpgrade(bananarang, "fling");
         damageUpgrade = BananarangItem.damageUpgrade(bananarang);
     }
 
