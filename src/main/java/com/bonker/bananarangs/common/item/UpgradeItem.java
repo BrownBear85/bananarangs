@@ -1,4 +1,4 @@
-package com.bonker.bananarangs.common.item.custom;
+package com.bonker.bananarangs.common.item;
 
 import com.bonker.bananarangs.Bananarangs;
 import net.minecraft.resources.ResourceLocation;

@@ -2,7 +2,7 @@ package com.bonker.bananarangs.common.entity;
 
 import com.bonker.bananarangs.common.damage.BRDamageSources;
 import com.bonker.bananarangs.common.item.BRItems;
-import com.bonker.bananarangs.common.item.custom.BananarangItem;
+import com.bonker.bananarangs.common.item.BananarangItem;
 import com.bonker.bananarangs.util.MathUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -19,18 +19,13 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.event.ForgeEventFactory;
-
-import java.util.List;
-import java.util.function.Supplier;
 
 public class BananarangEntity extends Projectile implements ItemSupplier {
 

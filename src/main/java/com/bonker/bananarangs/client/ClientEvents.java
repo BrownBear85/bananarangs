@@ -4,7 +4,7 @@ import com.bonker.bananarangs.Bananarangs;
 import com.bonker.bananarangs.client.renderer.BananarangBEWLR;
 import com.bonker.bananarangs.common.entity.BREntities;
 import com.bonker.bananarangs.client.renderer.BananarangEntityRenderer;
-import com.bonker.bananarangs.common.item.custom.UpgradeItem;
+import com.bonker.bananarangs.common.item.UpgradeItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;

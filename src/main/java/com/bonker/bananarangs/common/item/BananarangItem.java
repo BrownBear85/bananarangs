@@ -1,4 +1,4 @@
-package com.bonker.bananarangs.common.item.custom;
+package com.bonker.bananarangs.common.item;
 
 import com.bonker.bananarangs.client.renderer.BananarangBEWLR;
 import com.bonker.bananarangs.common.networking.BRNetworking;

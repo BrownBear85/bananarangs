@@ -1,8 +1,8 @@
 package com.bonker.bananarangs.client.renderer;
 
 import com.bonker.bananarangs.Bananarangs;
-import com.bonker.bananarangs.common.item.custom.BananarangItem;
-import com.bonker.bananarangs.common.item.custom.UpgradeItem;
+import com.bonker.bananarangs.common.item.BananarangItem;
+import com.bonker.bananarangs.common.item.UpgradeItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.RenderTypeHelper;

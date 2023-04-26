@@ -1,8 +1,6 @@
 package com.bonker.bananarangs.common.item;
 
 import com.bonker.bananarangs.Bananarangs;
-import com.bonker.bananarangs.common.item.custom.BananarangItem;
-import com.bonker.bananarangs.common.item.custom.UpgradeItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
