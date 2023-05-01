@@ -5,7 +5,11 @@ import com.bonker.bananarangs.client.renderer.BananarangBEWLR;
 import com.bonker.bananarangs.common.entity.BREntities;
 import com.bonker.bananarangs.client.renderer.BananarangEntityRenderer;
 import com.bonker.bananarangs.common.item.UpgradeItem;
+import com.bonker.bananarangs.menu.BRMenus;
+import com.bonker.bananarangs.menu.BananarangAnvilMenu;
+import com.bonker.bananarangs.menu.BananarangAnvilScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -23,6 +27,8 @@ public class ClientEvents {
         public static void clientSetup(FMLClientSetupEvent event) {
             Minecraft minecraft = Minecraft.getInstance();
             BananarangBEWLR.INSTANCE = new BananarangBEWLR(minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
+
+            MenuScreens.register(BRMenus.BANANARANG_ANVIL.get(), BananarangAnvilScreen::new);
         }
 
         @SubscribeEvent

@@ -3,8 +3,10 @@ package com.bonker.bananarangs.client.renderer;
 import com.bonker.bananarangs.Bananarangs;
 import com.bonker.bananarangs.common.item.BananarangItem;
 import com.bonker.bananarangs.common.item.UpgradeItem;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -39,22 +41,19 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
             layer1 = "flaming";
         }
 
-        boolean layer1valid = UpgradeItem.isValid(layer1);
-        boolean layer2valid = UpgradeItem.isValid(layer2);
+        boolean shouldRender1 = UpgradeItem.isValid(layer1);
+        boolean shouldRender2 = UpgradeItem.isValid(layer2);
 
-        int glintLayer = -1;
-        if (stack.hasFoil()) { // figure out which layer is on top and should therefore render the item glint
-            glintLayer = 0;
-            if (layer1valid) glintLayer = 1;
-            if (layer2valid) glintLayer = 2;
-        }
+        int topLayer = 0; // figure out which layer is on top and should therefore render the item glint
+        if (shouldRender1) topLayer = 1;
+        if (shouldRender2) topLayer = 2;
 
-        renderItemModel(stack, BASE_LOC, displayContext, poseStack, bufferSource, RenderType.solid(), glintLayer == 0, packedLight, packedOverlay);
-        if (layer1valid) renderItemModel(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer1), displayContext, poseStack, bufferSource, RenderType.translucent(), glintLayer == 1, packedLight, packedOverlay);
-        if (layer2valid) renderItemModel(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer2), displayContext, poseStack, bufferSource, RenderType.translucent(), glintLayer == 2, packedLight, packedOverlay); // if layer 2 is valid, it will always have glint
+        renderUpgrade(stack, BASE_LOC, displayContext, poseStack, bufferSource, RenderType.solid(), topLayer == 0, packedLight, packedOverlay);
+        if (shouldRender1) renderUpgrade(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer1), displayContext, poseStack, bufferSource, RenderType.translucent(), topLayer == 1, packedLight, packedOverlay);
+        if (shouldRender2) renderUpgrade(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer2), displayContext, poseStack, bufferSource, RenderType.translucent(), topLayer == 2, packedLight, packedOverlay); // if layer 2 is valid, it will always have glint
     }
 
-    private static void renderItemModel(ItemStack stack, ResourceLocation modelLoc, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, boolean glint, int packedLight, int packedOverlay) {
+    private static void renderUpgrade(ItemStack stack, ResourceLocation modelLoc, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, boolean topLayer, int packedLight, int packedOverlay) {
         poseStack.pushPose();
 
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
@@ -63,10 +62,35 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
         model = model.applyTransform(displayContext, poseStack, isLeftHand(displayContext));
         poseStack.translate(-0.5, -0.5, -0.5); // replicate ItemRenderer translation
 
-        if (displayContext != ItemDisplayContext.GUI) // if in gui, use default solid/translucent render type, otherwise
-            renderType = RenderTypeHelper.getEntityRenderType(renderType, true); // use entity render type
-        VertexConsumer vertexConsumer = ItemRenderer.getFoilBuffer(bufferSource, renderType, true, glint);
+        renderType = RenderTypeHelper.getEntityRenderType(renderType, true);
+        VertexConsumer vertexConsumer = ItemRenderer.getFoilBuffer(bufferSource, renderType, true, stack.hasFoil() && topLayer);
         itemRenderer.renderModelLists(model, ItemStack.EMPTY, packedLight, packedOverlay, poseStack, vertexConsumer);
+
+        boolean inGui = displayContext == ItemDisplayContext.GUI;
+        if (inGui) {
+            Lighting.setupForFlatItems();
+        }
+
+        if (topLayer) {
+            ItemStack attachedItem = BananarangItem.getAttachedItem(stack);
+            if (!attachedItem.isEmpty()) {
+                if (displayContext == ItemDisplayContext.GUI) {
+                    poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+                    poseStack.translate(-0.7, -0.7, 0);
+                    poseStack.scale(0.7F, 0.7F, 0.7F);
+                } else {
+                    poseStack.translate(0.125, 0.232, 0.531);
+                    poseStack.scale(0.7F, 0.7F, 0.7F);
+                    poseStack.mulPose(Axis.ZP.rotationDegrees(90));
+                }
+                itemRenderer.renderStatic(attachedItem, ItemDisplayContext.FIXED, packedLight, packedOverlay, poseStack, bufferSource, null, 42);
+            }
+        }
+
+        if (inGui) {
+            ((MultiBufferSource.BufferSource) bufferSource).endBatch();
+            Lighting.setupFor3DItems();
+        }
 
         poseStack.popPose();
     }

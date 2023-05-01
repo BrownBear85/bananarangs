@@ -21,6 +21,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -32,7 +33,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     private static final EntityDataAccessor<ItemStack> DATA_ITEM_STACK = SynchedEntityData.defineId(BananarangEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<Boolean> DATA_RETURNING = SynchedEntityData.defineId(BananarangEntity.class, EntityDataSerializers.BOOLEAN);
     private static final double deceleration = 0.96;
-    private static final double speedThreshold = 0.15;
+    private static final double speedThreshold = 0.16;
     private static final double maxSpeed = 2.0;
 
     private int age = 0;
@@ -49,15 +50,13 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         super(entityType, level);
     }
 
-    public static void shootFromEntity(ServerLevel level, LivingEntity shooter, ItemStack stack, double power, Vec3 delta) {
+    public static void shootFromEntity(ServerLevel level, LivingEntity shooter, ItemStack stack, double power) {
         BREntities.BANANARANG.get().spawn(level, null, (entity) -> {
             entity.setOwner(shooter);
             entity.setItem(stack);
-            entity.setPos(shooter.getEyePosition().subtract(0, 0.2, 0));
+            entity.setPos(shooter.getEyePosition().subtract(0, 0, 0));
             entity.setRot(shooter.getXRot(), shooter.getYRot());
-            entity.setDeltaMovement(shooter.getLookAngle()
-                    .add(delta.multiply(1, 0.4, 1))
-                    .multiply(power, power, power));
+            entity.setDeltaMovement(shooter.getLookAngle().multiply(power, power, power));
         }, BlockPos.ZERO, MobSpawnType.COMMAND, false, false);
     }
 
@@ -76,11 +75,11 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
                         } else {                                //
                             drop();                             // or drop it as an item
                         }
-                        player.getCooldowns().addCooldown(BRItems.BANANARANG.get(), 20);
+                        player.getCooldowns().addCooldown(BRItems.BANANARANG.get(), 5);
                     }
                 }
 
-                this.setDeltaMovement(this.getDeltaMovement().scale(0.95D).add( // stolen from ThrownTrident.java
+                this.setDeltaMovement(this.getDeltaMovement().scale(0.98D).add( // stolen from ThrownTrident.java
                         targetPos.subtract(this.position())                     // calculate the trajectory to the player and
                         .normalize().scale(0.05D)));                            // set the delta movement to it
             } else {
@@ -185,7 +184,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
 
     private boolean shouldDrop(Vec3 targetPos) {
         Entity owner = getOwner();
-        return owner != null && position().distanceToSqr(targetPos) < 2.0;
+        return owner != null && position().distanceToSqr(targetPos) < 5.0;
     }
 
     private void scaleDelta(double factor) {

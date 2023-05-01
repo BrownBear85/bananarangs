@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bananarangs:block/bananarang_anvil",
+      "y": 180
+    },
+    "facing=north": {
+      "model": "bananarangs:block/bananarang_anvil",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "bananarangs:block/bananarang_anvil",
+      "y": 270
+    },
+    "facing=west": {
+      "model": "bananarangs:block/bananarang_anvil"
+    }
+  }
+}

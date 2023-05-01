@@ -1,0 +1,68 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"textures": {
+		"top": "bananarangs:block/anvil_top",
+		"side": "bananarangs:block/anvil_side",
+		"bottom": "bananarangs:block/anvil_bottom",
+		"center": "bananarangs:block/anvil_center",
+		"particle": "bananarangs:block/anvil_top"
+	},
+	"elements": [
+		{
+			"name": "Anvil base",
+			"from": [1, 0, 1],
+			"to": [15, 4, 15],
+			"faces": {
+				"north": {"uv": [1, 14, 15, 10], "texture": "#side"},
+				"east": {"uv": [1, 10, 15, 14], "rotation": 180, "texture": "#side"},
+				"south": {"uv": [15, 14, 1, 10], "texture": "#side"},
+				"west": {"uv": [15, 10, 1, 14], "rotation": 180, "texture": "#side"},
+				"up": {"uv": [1, 2, 15, 16], "rotation": 180, "texture": "#bottom"},
+				"down": {"uv": [1, 2, 15, 16], "rotation": 180, "texture": "#bottom", "cullface": "down"}
+			}
+		},
+		{
+			"name": "Lower narrow portion",
+			"from": [3, 4, 3],
+			"to": [13, 5, 13],
+			"faces": {
+				"north": {"uv": [4, 1, 14, 2], "texture": "#center"},
+				"east": {"uv": [3, 3, 2, 13], "rotation": 270, "texture": "#center"},
+				"south": {"uv": [3, 11, 13, 12], "texture": "#center"},
+				"west": {"uv": [3, 12, 13, 13], "rotation": 180, "texture": "#center"},
+				"up": {"uv": [3, 3, 13, 13], "rotation": 180, "texture": "#center"}
+			}
+		},
+		{
+			"name": "Wider section beneath top portion",
+			"from": [4, 5, 4],
+			"to": [12, 10, 12],
+			"faces": {
+				"north": {"uv": [0, 5, 8, 10], "texture": "#center"},
+				"east": {"uv": [8, 5, 16, 0], "texture": "#center"},
+				"south": {"uv": [0, 0, 8, 5], "texture": "#center"},
+				"west": {"uv": [8, 5, 16, 10], "rotation": 180, "texture": "#center"}
+			}
+		},
+		{
+			"name": "Anvil top",
+			"from": [1, 10, 0],
+			"to": [15, 16, 16],
+			"faces": {
+				"north": {"uv": [1, 6, 15, 0], "rotation": 180, "texture": "#side", "cullface": "north"},
+				"east": {"uv": [16, 6, 0, 0], "rotation": 180, "texture": "#side"},
+				"south": {"uv": [1, 0, 15, 6], "texture": "#side", "cullface": "south"},
+				"west": {"uv": [16, 0, 0, 6], "texture": "#side"},
+				"up": {"uv": [1, 0, 15, 16], "rotation": 180, "texture": "#top", "cullface": "up"},
+				"down": {"uv": [1, 0, 15, 16], "rotation": 180, "texture": "#bottom"}
+			}
+		}
+	],
+	"display": {
+		"fixed": {
+			"rotation": [0, 90, 0],
+			"scale": [0.5, 0.5, 0.5]
+		}
+	}
+}

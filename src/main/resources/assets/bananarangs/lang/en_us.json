@@ -13,5 +13,7 @@
   "item.bananarangs.flaming_upgrade": "Flaming Upgrade",
   "item.bananarangs.fling_upgrade": "Fling Upgrade",
   "item.bananarangs.piercing_upgrade": "Piercing Upgrade",
-  "item.bananarangs.pickaxe_upgrade": "Pickaxe Upgrade"
+  "item.bananarangs.pickaxe_upgrade": "Pickaxe Upgrade",
+  "block.bananarangs.bananarang_anvil": "Bananarang Anvil",
+  "container.bananarang_anvil": "Apply Upgrades"
 }

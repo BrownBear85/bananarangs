@@ -1,0 +1,6 @@
+{
+  "parent": "bananarangs:item/upgrades/bananarang_base",
+  "textures": {
+    "base": "bananarangs:item/upgrades/pickaxe"
+  }
+}

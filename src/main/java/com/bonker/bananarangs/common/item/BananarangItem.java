@@ -1,9 +1,10 @@
 package com.bonker.bananarangs.common.item;
 
 import com.bonker.bananarangs.client.renderer.BananarangBEWLR;
-import com.bonker.bananarangs.common.networking.BRNetworking;
-import com.bonker.bananarangs.common.networking.BananarangC2SPacket;
+import com.bonker.bananarangs.common.entity.BananarangEntity;
+import net.minecraft.Util;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.function.Consumer;
@@ -24,10 +26,13 @@ public class BananarangItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (level.isClientSide) {
-            BRNetworking.sendToServer(new BananarangC2SPacket(player.getDeltaMovement(), hand));
+        ItemStack stack = player.getItemInHand(hand);
+        if (!level.isClientSide()) {
+            BananarangEntity.shootFromEntity((ServerLevel) level, player, Util.make(stack.copy(), stack1 -> stack1.setCount(1)), 0.9F);
+//            stack.shrink(1);
+            player.setItemInHand(hand, Util.make(stack, stack1 -> stack1.shrink(1)));
         }
-        return InteractionResultHolder.success(player.getItemInHand(hand));
+        return InteractionResultHolder.success(stack);
     }
 
     @Override
@@ -48,7 +53,7 @@ public class BananarangItem extends Item {
     }
 
     public static void setUpgradeInSlot(ItemStack stack, int slot, String upgrade) {
-        if (UpgradeItem.isValid(upgrade)) {
+        if (upgrade.equals("") || UpgradeItem.isValid(upgrade)) {
             stack.getOrCreateTag().putString("slot" + slot, upgrade);
         }
     }
@@ -61,6 +66,10 @@ public class BananarangItem extends Item {
 
     public static ItemStack getAttachedItem(ItemStack bananarang) {
         return ItemStack.of(bananarang.getOrCreateTag().getCompound("attachedItem"));
+    }
+
+    public static void setAttachedItem(ItemStack bananarang, ItemStack stack) {
+        bananarang.getOrCreateTag().put("attachedItem", stack.serializeNBT());
     }
 
     public static boolean hasPickaxe(ItemStack bananarang) {
