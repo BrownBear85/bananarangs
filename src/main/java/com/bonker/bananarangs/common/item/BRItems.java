@@ -4,10 +4,7 @@ import com.bonker.bananarangs.Bananarangs;
 import com.bonker.bananarangs.common.block.BRBlocks;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,7 +19,7 @@ public class BRItems {
 
 
     public static final RegistryObject<BananarangItem> BANANARANG = ITEMS.register("bananarang",
-            () -> new BananarangItem(props().stacksTo(1)));
+            () -> new BananarangItem(props().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> BLANK_UPGRADE = ITEMS.register("blank_upgrade",
             () -> new Item(props()));
     public static final RegistryObject<UpgradeItem> DAMAGE_UPGRADE_1 = ITEMS.register("damage_upgrade_1",

@@ -2,8 +2,12 @@ package com.bonker.bananarangs.common.item;
 
 import com.bonker.bananarangs.client.renderer.BananarangBEWLR;
 import com.bonker.bananarangs.common.entity.BananarangEntity;
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -11,11 +15,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class BananarangItem extends Item {
@@ -33,6 +41,39 @@ public class BananarangItem extends Item {
             player.setItemInHand(hand, Util.make(stack, stack1 -> stack1.shrink(1)));
         }
         return InteractionResultHolder.success(stack);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag isAdvanced) {
+        String slot0 = getUpgradeInSlot(stack, 0);
+        String slot1 = getUpgradeInSlot(stack, 1);
+        boolean slot0valid = UpgradeItem.isValid(slot0);
+        boolean slot1valid = UpgradeItem.isValid(slot1);
+        String key0; String key1 = key0 = "item.bananarangs.bananarang.no_upgrade";
+        if (slot0valid) {
+            ResourceLocation slot0loc = ForgeRegistries.ITEMS.getKey(UpgradeItem.UPGRADE_MAP.get(getUpgradeInSlot(stack, 0)));
+            key0 = slot0loc == null ? "null" : "item.bananarangs." + slot0loc.getPath();
+        }
+        if (slot1valid) {
+            ResourceLocation slot1loc = ForgeRegistries.ITEMS.getKey(UpgradeItem.UPGRADE_MAP.get(getUpgradeInSlot(stack, 1)));
+            key1 = slot1loc == null ? "null" : "item.bananarangs." + slot1loc.getPath();
+        }
+
+        float damage = 6.0F + 3.0F * damageUpgrade(stack);
+        tooltip.add(Component.translatable("item.bananarangs.bananarang.damage").withStyle(ChatFormatting.GRAY).append(Component.literal(Float.toString(damage)).withStyle(ChatFormatting.GOLD)));
+
+        ItemStack attachedItem = getAttachedItem(stack);
+        if (!attachedItem.isEmpty()) tooltip.add(Component.translatable("item.bananarangs.bananarang.attachedItem").withStyle(ChatFormatting.GRAY).append(attachedItem.getDisplayName()));
+
+        tooltip.add(Component.translatable(key0).withStyle(ChatFormatting.YELLOW));
+        if (slot0valid && !key0.equals("null") && Screen.hasShiftDown())
+            tooltip.add(Component.translatable(key0 + ".description").withStyle(ChatFormatting.DARK_GRAY));
+
+        tooltip.add(Component.translatable(key1).withStyle(ChatFormatting.YELLOW));
+        if (slot1valid && !key1.equals("null") && Screen.hasShiftDown())
+            tooltip.add(Component.translatable(key1 + ".description").withStyle(ChatFormatting.DARK_GRAY));
+
+        if (!Screen.hasShiftDown()) tooltip.add(Component.translatable("item.bananarangs.bananarang.shift").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override
