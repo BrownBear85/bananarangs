@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#i#",
+    "/B/",
+    "iDi"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:lead"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "/": {
+      "item": "minecraft:stick"
+    },
+    "B": {
+      "item": "bananarangs:blank_upgrade"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "result": {
+    "item": "bananarangs:pickaxe_upgrade",
+    "count": 1
+  }
+}

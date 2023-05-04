@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iAi",
+    "CBC",
+    "iAi"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "A": {
+      "item": "minecraft:arrow"
+    },
+    "C": {
+      "item": "minecraft:crossbow"
+    },
+    "B": {
+      "item": "bananarangs:blank_upgrade"
+    }
+  },
+  "result": {
+    "item": "bananarangs:piercing_upgrade",
+    "count": 1
+  }
+}

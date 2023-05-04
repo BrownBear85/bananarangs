@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "BLB",
+    "SSS"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:iron_block"
+    },
+    "B": {
+      "item": "bananarangs:banana"
+    },
+    "L": {
+      "tag": "minecraft:logs"
+    },
+    "S": {
+      "item": "minecraft:stone_bricks"
+    }
+  },
+  "result": {
+    "item": "bananarangs:bananarang_anvil",
+    "count": 1
+  }
+}

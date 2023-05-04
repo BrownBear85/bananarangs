@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "OFO",
+    "F#F",
+    "OFO"
+  ],
+  "key": {
+    "#": {
+      "item": "bananarangs:blank_upgrade"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "F": {
+      "item": "minecraft:fire_charge"
+    }
+  },
+  "result": {
+    "item": "bananarangs:flaming_upgrade",
+    "count": 1
+  }
+}

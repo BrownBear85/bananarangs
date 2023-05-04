@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "gDg",
+    "BJB",
+    "gDg"
+  ],
+  "key": {
+    "g": {
+      "item": "minecraft:lapis_lazuli"
+    },
+    "D": {
+      "item": "minecraft:diamond_sword"
+    },
+    "B": {
+      "item": "bananarangs:damage_upgrade_1"
+    },
+    "J": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "result": {
+    "item": "bananarangs:damage_upgrade_2",
+    "count": 1
+  }
+}

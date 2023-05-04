@@ -4,6 +4,7 @@ import com.bonker.bananarangs.Bananarangs;
 import com.bonker.bananarangs.common.block.BRBlocks;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.CreativeModeTabEvent;
@@ -18,6 +19,8 @@ public class BRItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Bananarangs.MODID);
 
 
+    public static final RegistryObject<Item> BANANA = ITEMS.register("banana",
+            () -> new Item(props().food(new FoodProperties.Builder().nutrition(4).saturationMod(0.5F).build())));
     public static final RegistryObject<BananarangItem> BANANARANG = ITEMS.register("bananarang",
             () -> new BananarangItem(props().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> BLANK_UPGRADE = ITEMS.register("blank_upgrade",
@@ -61,6 +64,7 @@ public class BRItems {
                             populator.accept(DAMAGE_UPGRADE_2.get());
                             populator.accept(DAMAGE_UPGRADE_3.get());
                             populator.accept(PICKAXE_UPGRADE.get());
+                            populator.accept(BANANA.get());
                         }));
     }
 }
