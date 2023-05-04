@@ -60,6 +60,7 @@ public class BananarangItem extends Item {
         }
 
         float damage = 6.0F + 3.0F * damageUpgrade(stack);
+        if (hasUpgrade(stack, "piercing")) damage *= 0.5;
         tooltip.add(Component.translatable("item.bananarangs.bananarang.damage").withStyle(ChatFormatting.GRAY).append(Component.literal(Float.toString(damage)).withStyle(ChatFormatting.GOLD)));
 
         ItemStack attachedItem = getAttachedItem(stack);

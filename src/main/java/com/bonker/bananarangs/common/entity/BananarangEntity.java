@@ -123,7 +123,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         Entity owner = getOwner();
         if (entity != owner) {
             float damage = 6.0F + 3.0F * damageUpgrade; // each damage upgrade increases damage by 1.5 heart
-            if (piercing || hasPickaxe) { // nerf piercing damage for balance and decrease damage if it has a pickaxe
+            if (piercing) { // nerf piercing damage for balance and decrease damage if it has a pickaxe
                 damage *= 0.5;
             }
             entity.hurt(new BRDamageSources.BananarangDamageSource(piercing, this, getOwner()), damage);
