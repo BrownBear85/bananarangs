@@ -119,7 +119,7 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
             }
             @Override
             public boolean mayPickup(Player player) {
-                return container.getItem(ITEM_SLOT_INDEX).isEmpty();
+                return getItemUpgradeSlot() != slot || container.getItem(ITEM_SLOT_INDEX).isEmpty();
             }
             @Override
             public void set(ItemStack stack) {
