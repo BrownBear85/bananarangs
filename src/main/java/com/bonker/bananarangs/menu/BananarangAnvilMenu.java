@@ -5,7 +5,6 @@ import com.bonker.bananarangs.common.item.BRItems;
 import com.bonker.bananarangs.common.item.BananarangItem;
 import com.bonker.bananarangs.common.item.UpgradeItem;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -46,17 +45,15 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
 
     @Override
     public void removed(Player pPlayer) {
-        onTakeBananarang();
+        clearSlots();
         super.removed(pPlayer);
-        this.access.execute((level, pos) -> {
-            this.clearContainer(pPlayer, container);
-        });
+        this.access.execute((level, pos) -> this.clearContainer(pPlayer, container));
     }
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
         Slot sourceSlot = slots.get(index);
-        if (sourceSlot == null || !sourceSlot.hasItem()) return ItemStack.EMPTY;  //EMPTY_ITEM
+        if (!sourceSlot.hasItem()) return ItemStack.EMPTY;  //EMPTY_ITEM
         ItemStack sourceStack = sourceSlot.getItem();
         ItemStack copyOfSourceStack = sourceStack.copy();
 
@@ -86,6 +83,8 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
         return copyOfSourceStack;
     }
 
+
+
     @Override
     public boolean stillValid(Player pPlayer) {
         return this.access.evaluate((level, pos) ->
@@ -102,11 +101,7 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
             @Override
             public void set(ItemStack stack) {
                 super.set(stack);
-                onPutBananarang(stack);
-            }
-            @Override
-            public void onTake(Player player, ItemStack stack) {
-                onTakeBananarang();
+                onSetBananarang(stack);
             }
         });
     }
@@ -124,11 +119,7 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
             @Override
             public void set(ItemStack stack) {
                 super.set(stack);
-                onPutUpgrade(slot, stack);
-            }
-            @Override
-            public void onTake(Player player, ItemStack stack) {
-                onTakeUpgrade(player, slot);
+                onSetUpgrade(slot, stack);
             }
             @Override
             public boolean isActive() {
@@ -153,10 +144,6 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
             public void set(ItemStack stack) {
                 super.set(stack);
                 onSetItem(stack);
-            }
-            @Override
-            public void onTake(Player player, ItemStack stack) {
-                onTakeItem();
             }
             @Override
             public boolean isActive() {
@@ -184,35 +171,30 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
         return ((UpgradeItem) otherUpgrade.getItem()).isCompatible(((UpgradeItem) upgrade.getItem()).getUpgrade());
     }
 
-    private void onPutBananarang(ItemStack stack) {
-        UpgradeItem slot0 = UpgradeItem.UPGRADE_MAP.get(BananarangItem.getUpgradeInSlot(stack, 0));
-        UpgradeItem slot1 = UpgradeItem.UPGRADE_MAP.get(BananarangItem.getUpgradeInSlot(stack, 1));
-        if (slot0 != null) container.setItem(UPGRADE_SLOT_INDEXES.get(0), new ItemStack(slot0));
-        if (slot1 != null) container.setItem(UPGRADE_SLOT_INDEXES.get(1), new ItemStack(slot1));
-        container.setItem(ITEM_SLOT_INDEX, BananarangItem.getAttachedItem(stack));
+    private void onSetBananarang(ItemStack stack) {
+        if (stack.isEmpty()) {
+            clearSlots();
+        } else {
+            UpgradeItem slot0 = UpgradeItem.UPGRADE_MAP.get(BananarangItem.getUpgradeInSlot(stack, 0));
+            UpgradeItem slot1 = UpgradeItem.UPGRADE_MAP.get(BananarangItem.getUpgradeInSlot(stack, 1));
+            if (slot0 != null) container.setItem(UPGRADE_SLOT_INDEXES.get(0), new ItemStack(slot0));
+            if (slot1 != null) container.setItem(UPGRADE_SLOT_INDEXES.get(1), new ItemStack(slot1));
+            container.setItem(ITEM_SLOT_INDEX, BananarangItem.getAttachedItem(stack));
+        }
     }
 
-    private void onTakeBananarang() {
+    private void clearSlots() {
         container.setItem(UPGRADE_SLOT_INDEXES.get(0), ItemStack.EMPTY);
         container.setItem(UPGRADE_SLOT_INDEXES.get(1), ItemStack.EMPTY);
         container.setItem(ITEM_SLOT_INDEX, ItemStack.EMPTY);
     }
 
-    private void onPutUpgrade(int slot, ItemStack stack) {
-        if (stack.isEmpty() || !(stack.getItem() instanceof UpgradeItem)) return;
-        BananarangItem.setUpgradeInSlot(container.getItem(BANANARANG_SLOT_INDEX), slot, ((UpgradeItem) stack.getItem()).getUpgrade());
-    }
-
-    private void onTakeUpgrade(Player player, int slot) {
-        BananarangItem.setUpgradeInSlot(container.getItem(BANANARANG_SLOT_INDEX), slot, "");
+    private void onSetUpgrade(int slot, ItemStack stack) {
+        BananarangItem.setUpgradeInSlot(container.getItem(BANANARANG_SLOT_INDEX), slot, stack.isEmpty() ? "" : ((UpgradeItem) stack.getItem()).getUpgrade());
     }
 
     private void onSetItem(ItemStack stack) {
         BananarangItem.setAttachedItem(container.getItem(BANANARANG_SLOT_INDEX), stack);
-    }
-
-    private void onTakeItem() {
-        BananarangItem.setAttachedItem(container.getItem(BANANARANG_SLOT_INDEX), ItemStack.EMPTY);
     }
 
     private void createInventorySlots(Inventory inventory) {
