@@ -19,11 +19,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.RenderTypeHelper;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
 
     public static final ResourceLocation BASE_LOC = new ResourceLocation(Bananarangs.MODID, "item/upgrades/bananarang_base");
     public static BananarangBEWLR INSTANCE;
+    public static final IClientItemExtensions EXTENSION = new IClientItemExtensions() {
+        @Override
+        public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+            return BananarangBEWLR.INSTANCE;
+        }
+    };
 
     public BananarangBEWLR(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {
         super(pBlockEntityRenderDispatcher, pEntityModelSet);

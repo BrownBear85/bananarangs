@@ -1,7 +1,6 @@
 package com.bonker.bananarangs.common.damage;
 
 import com.bonker.bananarangs.Bananarangs;
-import com.bonker.bananarangs.common.entity.BREntities;
 import com.bonker.bananarangs.common.entity.BananarangEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
