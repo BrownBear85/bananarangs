@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.ItemSupplier;
@@ -20,13 +21,18 @@ import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.event.ForgeEventFactory;
+
+import java.util.List;
 
 public class BananarangEntity extends Projectile implements ItemSupplier {
 
@@ -91,17 +97,37 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         Vec3 posOld = position();
         setPos(posOld.add(getDeltaMovement()));
 
-        if (hasPickaxe && !isReturning()) {
-            BlockPos.betweenClosedStream(getBoundingBox()).forEach((pos) -> { // for each block inside the hitbox
-                BlockState state = level.getBlockState(pos);
-                if (canMine(state, pos)) {
-                    level.destroyBlock(pos, true);
-                    scaleDelta(Math.max(0, 1 -                        // this is a fraction. a "default block" is stone block (1.5 destroy time)
-                            state.getDestroySpeed(level, pos) / 1.5 / // how many "default blocks' worth" of destroy time have you used
-                                    (pickaxeEfficiency + 1)));        // the total amount of "default blocks" you can destroy (1 block with no eff. and 6 with eff. 5)
+        if (level instanceof ServerLevel serverLevel) {
+            if (hasPickaxe && !isReturning()) {
+                for (BlockPos pos : BlockPos.betweenClosedStream(getBoundingBox()).toList()) { // for each block inside the hitbox
+                    BlockState state = level.getBlockState(pos);
+                    if (canMine(state, pos)) {
+                        level.destroyBlock(pos, false);
+                        if (attachedItem.hurt(1, level.random, null)) {
+                            attachedItem.shrink(1);
+                            attachedItem.setDamageValue(0);
+                            playSound(SoundEvents.ITEM_BREAK);
+                            updateAttachedItem();
+                            break;
+                        }
+                        updateAttachedItem();
+
+                        LootContext.Builder contextBuilder = new LootContext.Builder(serverLevel).withRandom(level.random)
+                                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                                .withParameter(LootContextParams.BLOCK_STATE, state)
+                                .withParameter(LootContextParams.TOOL, attachedItem);
+                        for (ItemStack drop : state.getDrops(contextBuilder)) {
+                            Block.popResource(level, pos, drop);
+                        }
+                        state.spawnAfterBreak(serverLevel, pos, ItemStack.EMPTY, true);
+
+                        scaleDelta(Math.max(0, 1 -                        // this is a fraction. a "default block" is stone block (1.5 destroy time)
+                                state.getDestroySpeed(level, pos) / 1.5 / // how many "default blocks' worth" of destroy time have you used
+                                        (pickaxeEfficiency + 1)));        // the total amount of "default blocks" you can destroy (1 block with no eff. and 6 with eff. 5)
+                    }
+                    updateReturning();
                 }
-                updateReturning();
-            });
+            }
         }
 
         HitResult hitResult = ProjectileUtil.getHitResult(this, this::canHitEntity);
@@ -149,6 +175,12 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
         return distance < 4096;
+    }
+
+    private void updateAttachedItem() {
+        ItemStack bananarang = getItem();
+        BananarangItem.setAttachedItem(bananarang, attachedItem);
+        setItem(bananarang);
     }
 
     public void setUpgrades(ItemStack bananarang) {

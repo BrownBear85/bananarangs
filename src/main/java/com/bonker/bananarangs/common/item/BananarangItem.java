@@ -87,6 +87,21 @@ public class BananarangItem extends Item {
         });
     }
 
+    @Override
+    public boolean isBarVisible(ItemStack pStack) {
+        return getAttachedItem(pStack).isBarVisible();
+    }
+
+    @Override
+    public int getBarWidth(ItemStack pStack) {
+        return getAttachedItem(pStack).getBarWidth();
+    }
+
+    @Override
+    public int getBarColor(ItemStack pStack) {
+        return getAttachedItem(pStack).getBarColor();
+    }
+
     /** @param slot 0 or 1
      * @return the upgrade string or an empty string if no upgrade is in that slot */
     public static String getUpgradeInSlot(ItemStack stack, int slot) {
