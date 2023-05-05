@@ -7,6 +7,8 @@ import net.minecraft.Util;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -37,7 +39,6 @@ public class BananarangItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide()) {
             BananarangEntity.shootFromEntity((ServerLevel) level, player, Util.make(stack.copy(), stack1 -> stack1.setCount(1)), 0.9F);
-//            stack.shrink(1);
             player.setItemInHand(hand, Util.make(stack, stack1 -> stack1.shrink(1)));
         }
         return InteractionResultHolder.success(stack);
@@ -64,7 +65,17 @@ public class BananarangItem extends Item {
         tooltip.add(Component.translatable("item.bananarangs.bananarang.damage").withStyle(ChatFormatting.GRAY).append(Component.literal(Float.toString(damage)).withStyle(ChatFormatting.GOLD)));
 
         ItemStack attachedItem = getAttachedItem(stack);
-        if (!attachedItem.isEmpty()) tooltip.add(Component.translatable("item.bananarangs.bananarang.attachedItem").withStyle(ChatFormatting.GRAY).append(attachedItem.getDisplayName()));
+        if (!attachedItem.isEmpty()) {
+            tooltip.add(Component.translatable("item.bananarangs.bananarang.attachedItem").withStyle(ChatFormatting.GRAY).append(attachedItem.getDisplayName()));
+            if (Screen.hasShiftDown()) {
+                List<Component> lines = attachedItem.getTooltipLines(null, TooltipFlag.NORMAL);
+                lines = lines.subList(1, lines.size());
+                for (Component line : lines) {
+                    if (line.getContents() == ComponentContents.EMPTY) continue;
+                    tooltip.add(Component.literal("|   ").append(MutableComponent.create(line.getContents())).withStyle(ChatFormatting.GRAY));
+                }
+            }
+        }
 
         tooltip.add(Component.translatable(key0).withStyle(ChatFormatting.YELLOW));
         if (slot0valid && !key0.equals("null") && Screen.hasShiftDown())
@@ -74,7 +85,7 @@ public class BananarangItem extends Item {
         if (slot1valid && !key1.equals("null") && Screen.hasShiftDown())
             tooltip.add(Component.translatable(key1 + ".description").withStyle(ChatFormatting.DARK_GRAY));
 
-        if (!Screen.hasShiftDown()) tooltip.add(Component.translatable("item.bananarangs.bananarang.shift").withStyle(ChatFormatting.DARK_GRAY));
+        if (!Screen.hasShiftDown() && isUpgraded(stack)) tooltip.add(Component.translatable("item.bananarangs.bananarang.shift").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override
@@ -110,6 +121,7 @@ public class BananarangItem extends Item {
     }
 
     public static void setUpgradeInSlot(ItemStack stack, int slot, String upgrade) {
+        if (slot != 0 && slot != 1) return;
         if (upgrade.equals("") || UpgradeItem.isValid(upgrade)) {
             stack.getOrCreateTag().putString("slot" + slot, upgrade);
         }
@@ -119,6 +131,10 @@ public class BananarangItem extends Item {
         if (!UpgradeItem.isValid(upgrade)) return false;
         if (upgrade.equals(getUpgradeInSlot(stack, 0))) return true;
         return upgrade.equals(getUpgradeInSlot(stack, 1));
+    }
+
+    public static boolean isUpgraded(ItemStack stack) {
+        return !getUpgradeInSlot(stack, 0).equals("") || !getUpgradeInSlot(stack, 1).equals("");
     }
 
     public static ItemStack getAttachedItem(ItemStack bananarang) {
