@@ -21,6 +21,7 @@ public class BananarangAnvilScreen extends AbstractContainerScreen<BananarangAnv
     public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
         super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
         renderTooltip(pPoseStack, pMouseX, pMouseY);
+        if (!menu.hasBananarang()) renderPlaceBananarangText(pPoseStack);
     }
 
     @Override
@@ -41,5 +42,17 @@ public class BananarangAnvilScreen extends AbstractContainerScreen<BananarangAnv
             int uOffset = attachedItemSlot == 0 ? 112 : 130;
             blit(pPoseStack, slotX, y + 41, uOffset, 166, 18, 28);
         }
+    }
+
+    @Override
+    protected void renderLabels(PoseStack pPoseStack, int pMouseX, int pMouseY) {
+        super.renderLabels(pPoseStack, pMouseX, pMouseY);
+    }
+
+    private void renderPlaceBananarangText(PoseStack poseStack) {
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
+        String text = Component.translatable("container.bananarang_anvil.place_bananarang").getString();
+        font.draw(poseStack, text, x + 88 - font.width(text) / 2F, y + 50, 0x909090);
     }
 }

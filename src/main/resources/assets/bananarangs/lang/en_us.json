@@ -28,5 +28,6 @@
   "item.bananarangs.flaming_upgrade.description": "Lights victims on fire",
   "item.bananarangs.fling_upgrade.description": "Launches victims in the air",
   "item.bananarangs.piercing_upgrade.description": "Pierces through victims and their armor",
-  "item.bananarangs.pickaxe_upgrade.description": "Enables pickaxe attachment and block mining"
+  "item.bananarangs.pickaxe_upgrade.description": "Enables pickaxe attachment and block mining",
+  "container.bananarang_anvil.place_bananarang": "Place bananarang"
 }
