@@ -31,7 +31,7 @@ public class BananarangItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide()) {
-            BananarangEntity.shootFromEntity((ServerLevel) level, player, Util.make(stack.copy(), stack1 -> stack1.setCount(1)), 0.9F);
+            BananarangEntity.shootFromEntity((ServerLevel) level, player, Util.make(stack.copy(), stack1 -> stack1.setCount(1)));
             player.setItemInHand(hand, Util.make(stack, stack1 -> stack1.shrink(1)));
         }
         return InteractionResultHolder.success(stack);
@@ -107,6 +107,13 @@ public class BananarangItem extends Item {
         if (hasUpgrade(bananarang, "damage_1")) return 1;
         if (hasUpgrade(bananarang, "damage_2")) return 2;
         if (hasUpgrade(bananarang, "damage_3")) return 3;
+        return 0;
+    }
+
+    public static double powerUpgrade(ItemStack bananarang) {
+        if (hasUpgrade(bananarang, "power_1")) return 1;
+        if (hasUpgrade(bananarang, "power_2")) return 2;
+        if (hasUpgrade(bananarang, "power_3")) return 3;
         return 0;
     }
 }

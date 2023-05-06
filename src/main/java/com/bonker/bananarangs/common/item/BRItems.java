@@ -26,11 +26,11 @@ public class BRItems {
     public static final RegistryObject<Item> BLANK_UPGRADE = ITEMS.register("blank_upgrade",
             () -> new Item(props()));
     public static final RegistryObject<UpgradeItem> DAMAGE_UPGRADE_1 = ITEMS.register("damage_upgrade_1",
-            () -> new UpgradeItem(props(), "damage_1", UpgradeItem.EDGE_UPGRADES));
+            () -> new UpgradeItem(props(), "damage_1", UpgradeItem.DAMAGE_UPGRADES));
     public static final RegistryObject<UpgradeItem> DAMAGE_UPGRADE_2 = ITEMS.register("damage_upgrade_2",
-            () -> new UpgradeItem(props(), "damage_2", UpgradeItem.EDGE_UPGRADES));
+            () -> new UpgradeItem(props(), "damage_2", UpgradeItem.DAMAGE_UPGRADES));
     public static final RegistryObject<UpgradeItem> DAMAGE_UPGRADE_3 = ITEMS.register("damage_upgrade_3",
-            () -> new UpgradeItem(props(), "damage_3", UpgradeItem.EDGE_UPGRADES));
+            () -> new UpgradeItem(props(), "damage_3", UpgradeItem.DAMAGE_UPGRADES));
     public static final RegistryObject<UpgradeItem> FLAMING_UPGRADE = ITEMS.register("flaming_upgrade",
             () -> new UpgradeItem(props(), "flaming", UpgradeItem.NONE));
     public static final RegistryObject<UpgradeItem> FLING_UPGRADE = ITEMS.register("fling_upgrade",
@@ -38,7 +38,13 @@ public class BRItems {
     public static final RegistryObject<UpgradeItem> PIERCING_UPGRADE = ITEMS.register("piercing_upgrade",
             () -> new UpgradeItem(props(), "piercing", UpgradeItem.CENTER_UPGRADES));
     public static final RegistryObject<UpgradeItem.AttachItemUpgrade> PICKAXE_UPGRADE = ITEMS.register("pickaxe_upgrade",
-            () -> new UpgradeItem.AttachItemUpgrade(props(), "pickaxe", UpgradeItem.NONE, (stack) -> stack.getItem() instanceof PickaxeItem));
+            () -> new UpgradeItem.AttachItemUpgrade(props(), "pickaxe", UpgradeItem.POWER_UPGRADES, (stack) -> stack.getItem() instanceof PickaxeItem));
+    public static final RegistryObject<UpgradeItem> POWER_UPGRADE_1 = ITEMS.register("power_upgrade_1",
+            () -> new UpgradeItem(props(), "power_1", UpgradeItem.POWER_UPGRADES));
+    public static final RegistryObject<UpgradeItem> POWER_UPGRADE_2 = ITEMS.register("power_upgrade_2",
+            () -> new UpgradeItem(props(), "power_2", UpgradeItem.POWER_UPGRADES));
+    public static final RegistryObject<UpgradeItem> POWER_UPGRADE_3 = ITEMS.register("power_upgrade_3",
+            () -> new UpgradeItem(props(), "power_3", UpgradeItem.POWER_UPGRADES));
     public static final RegistryObject<BlockItem> BANANARANG_ANVIL = ITEMS.register("bananarang_anvil",
             () -> new BlockItem(BRBlocks.BANANARANG_ANVIL.get(), props()));
 
@@ -56,15 +62,18 @@ public class BRItems {
                         .displayItems((parameters, populator) -> {
                             populator.accept(BANANARANG.get());
                             populator.accept(BANANARANG_ANVIL.get());
-                            populator.accept(BLANK_UPGRADE.get());
-                            populator.accept(FLAMING_UPGRADE.get());
-                            populator.accept(FLING_UPGRADE.get());
-                            populator.accept(PIERCING_UPGRADE.get());
+                            populator.accept(BANANA.get());
                             populator.accept(DAMAGE_UPGRADE_1.get());
                             populator.accept(DAMAGE_UPGRADE_2.get());
                             populator.accept(DAMAGE_UPGRADE_3.get());
+                            populator.accept(POWER_UPGRADE_1.get());
+                            populator.accept(POWER_UPGRADE_2.get());
+                            populator.accept(POWER_UPGRADE_3.get());
+                            populator.accept(FLAMING_UPGRADE.get());
+                            populator.accept(PIERCING_UPGRADE.get());
+                            populator.accept(FLING_UPGRADE.get());
                             populator.accept(PICKAXE_UPGRADE.get());
-                            populator.accept(BANANA.get());
+                            populator.accept(BLANK_UPGRADE.get());
                         }));
     }
 }

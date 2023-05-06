@@ -12,8 +12,10 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -25,11 +27,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.event.ForgeEventFactory;
+
+import java.util.List;
 
 public class BananarangEntity extends Projectile implements ItemSupplier {
 
@@ -39,8 +44,9 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     private static final double speedThreshold = 0.16;
     private static final double maxSpeed = 2.0;
 
-    private int age = 0;
+    public static final float HITBOX_SIZE = 0.65F;
 
+    private int age = 0;
     private boolean hasPickaxe = false;
     private ItemStack attachedItem = ItemStack.EMPTY;
     private float pickaxeEfficiency = 0;
@@ -53,11 +59,12 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         super(entityType, level);
     }
 
-    public static void shootFromEntity(ServerLevel level, LivingEntity shooter, ItemStack stack, double power) {
+    public static void shootFromEntity(ServerLevel level, LivingEntity shooter, ItemStack stack) {
+        double power = 0.9 * (1 + 0.4 * BananarangItem.powerUpgrade(stack));
         BREntities.BANANARANG.get().spawn(level, null, (entity) -> {
             entity.setOwner(shooter);
             entity.setItem(stack);
-            entity.setPos(shooter.getEyePosition().subtract(0, 0, 0));
+            entity.setPos(shooter.getEyePosition().subtract(0, HITBOX_SIZE / 2, 0));
             entity.setRot(shooter.getXRot(), shooter.getYRot());
             entity.setDeltaMovement(shooter.getLookAngle().multiply(power, power, power));
         }, BlockPos.ZERO, MobSpawnType.COMMAND, false, false);
@@ -65,11 +72,9 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
 
     @Override
     public void tick() {
-        super.tick();
-
         Entity owner = getOwner();
         if (owner != null) {
-            Vec3 targetPos = owner.getEyePosition().subtract(0, 1.0, 0);
+            Vec3 targetPos = owner.getEyePosition().subtract(0, HITBOX_SIZE / 2, 0);
             if (this.isReturning()) {                           // if it is coming back,
                 if (shouldDrop(targetPos)) {                    // and it's close to the player,
                     if (owner instanceof ServerPlayer player) { //
@@ -96,11 +101,11 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
 
         if (level instanceof ServerLevel serverLevel) {
             if (hasPickaxe && !isReturning()) {
-                for (BlockPos pos : BlockPos.betweenClosedStream(getBoundingBox()).toList()) { // for each block inside the hitbox
+                for (BlockPos pos : MathUtil.insideHitbox(getBoundingBox())) { // for each block inside the hitbox
                     BlockState state = level.getBlockState(pos);
                     if (canMine(state, pos)) {
                         level.destroyBlock(pos, false);
-                        if (attachedItem.hurt(1, level.random, null)) {
+                        if ((owner instanceof Player player && !player.getAbilities().instabuild) && attachedItem.hurt(1, level.random, null)) {
                             attachedItem.shrink(1);
                             attachedItem.setDamageValue(0);
                             playSound(SoundEvents.ITEM_BREAK);

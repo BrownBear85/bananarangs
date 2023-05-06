@@ -1,12 +1,8 @@
 {
   "item_group.bananarangs.tab": "Bananarangs",
+
   "item.bananarangs.bananarang": "Bananarang",
   "item.bananarangs.banana": "Banana",
-  "entity.bananarangs.bananarang": "Bananarang",
-  "death.attack.bananarang": "%1$s was peeled by %2$s",
-  "death.attack.bananarang.item": "%1$s was peeled by %2$s using %3$s",
-  "death.attack.piercingBananarang": "%1$s was poked by %2$s",
-  "death.attack.piercingBananarang.item": "%1$s was poked by %2$s using %3$s",
   "item.bananarangs.blank_upgrade": "Blank Upgrade",
   "item.bananarangs.damage_upgrade_1": "Damage+ Upgrade",
   "item.bananarangs.damage_upgrade_2": "Damage++ Upgrade",
@@ -15,13 +11,10 @@
   "item.bananarangs.fling_upgrade": "Fling Upgrade",
   "item.bananarangs.piercing_upgrade": "Piercing Upgrade",
   "item.bananarangs.pickaxe_upgrade": "Pickaxe Upgrade",
-  "block.bananarangs.bananarang_anvil": "Bananarang Anvil",
-  "container.bananarang_anvil": "Apply Upgrades",
-  "item.bananarangs.bananarang.upgrades": "Upgrades:",
-  "item.bananarangs.bananarang.no_upgrade": " - Empty -",
-  "item.bananarangs.bananarang.attachedItem": "Attached Item: ",
-  "item.bananarangs.bananarang.damage": "Damage: ",
-  "item.bananarangs.bananarang.shift": "Press <SHIFT> for more information",
+  "item.bananarangs.power_upgrade_1": "Throw+ Upgrade",
+  "item.bananarangs.power_upgrade_2": "Throw++ Upgrade",
+  "item.bananarangs.power_upgrade_3": "Throw+++ Upgrade",
+
   "item.bananarangs.damage_upgrade_1.description": "Damage increased by 1.5 hearts",
   "item.bananarangs.damage_upgrade_2.description": "Damage increased by 3.0 hearts",
   "item.bananarangs.damage_upgrade_3.description": "Damage increased by 4.5 hearts",
@@ -29,5 +22,25 @@
   "item.bananarangs.fling_upgrade.description": "Launches victims in the air",
   "item.bananarangs.piercing_upgrade.description": "Pierces through victims and their armor",
   "item.bananarangs.pickaxe_upgrade.description": "Enables pickaxe attachment and block mining",
+  "item.bananarangs.power_upgrade_1.description": "Throwing power increased by 40%",
+  "item.bananarangs.power_upgrade_2.description": "Throwing power increased by 80%",
+  "item.bananarangs.power_upgrade_3.description": "Throwing power increased by 120%",
+
+  "item.bananarangs.bananarang.upgrades": "Upgrades:",
+  "item.bananarangs.bananarang.no_upgrade": " - Empty -",
+  "item.bananarangs.bananarang.attachedItem": "Attached Item: ",
+  "item.bananarangs.bananarang.damage": "Damage: ",
+  "item.bananarangs.bananarang.shift": "Press <SHIFT> for more information",
+
+  "entity.bananarangs.bananarang": "Bananarang",
+
+  "death.attack.bananarang": "%1$s was peeled by %2$s",
+  "death.attack.bananarang.item": "%1$s was peeled by %2$s using %3$s",
+  "death.attack.piercingBananarang": "%1$s was poked by %2$s",
+  "death.attack.piercingBananarang.item": "%1$s was poked by %2$s using %3$s",
+
+  "block.bananarangs.bananarang_anvil": "Bananarang Anvil",
+
+  "container.bananarang_anvil": "Apply Upgrades",
   "container.bananarang_anvil.place_bananarang": "Place bananarang"
 }

@@ -13,7 +13,7 @@ public class BREntities {
 
     public static final RegistryObject<EntityType<BananarangEntity>> BANANARANG = ENTITY_TYPES.register("bananarang",
             () -> EntityType.Builder.of(BananarangEntity::new, MobCategory.MISC)
-                    .sized(0.65F, 0.65F)
+                    .sized(BananarangEntity.HITBOX_SIZE, BananarangEntity.HITBOX_SIZE)
                     .updateInterval(1)
                     .clientTrackingRange(8)
                     .setShouldReceiveVelocityUpdates(true)
