@@ -1,4 +1,4 @@
-package com.bonker.bananarangs.common.damage;
+package com.bonker.bananarangs.common;
 
 import com.bonker.bananarangs.Bananarangs;
 import com.bonker.bananarangs.common.entity.BananarangEntity;
@@ -13,7 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public class BRDamageSources {
+public class BRDamage {
     public static final ResourceKey<DamageType> BANANARANG = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Bananarangs.MODID, "bananarang"));
     public static final ResourceKey<DamageType> PIERCING_BANANARANG = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Bananarangs.MODID, "piercing_bananarang"));
 
@@ -29,7 +29,7 @@ public class BRDamageSources {
 
         public BananarangDamageSource(boolean piercing, BananarangEntity direct, @Nullable Entity thrower) {
             super(direct.level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
-                    .getHolderOrThrow(piercing ? BRDamageSources.PIERCING_BANANARANG : BRDamageSources.BANANARANG),
+                    .getHolderOrThrow(piercing ? BRDamage.PIERCING_BANANARANG : BRDamage.BANANARANG),
                     direct, thrower);
         }
 
