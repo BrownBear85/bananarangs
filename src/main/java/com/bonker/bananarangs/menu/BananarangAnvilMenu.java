@@ -200,14 +200,12 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
         BananarangItem.setUpgradeInSlot(container.getItem(BANANARANG_SLOT_INDEX), slot, stack.isEmpty() ? "" : ((UpgradeItem) stack.getItem()).getUpgrade());
         playSound(BRSounds.UPGRADE_SLOT_INTERACT.get(), stack.isEmpty() ? 1.0F : 0.8F);
         changedNBT = true;
-        System.out.println("changedNBT");
     }
 
     private void onSetItem(ItemStack stack) {
         BananarangItem.setAttachedItem(container.getItem(BANANARANG_SLOT_INDEX), stack);
         playSound(BRSounds.ITEM_SLOT_INTERACT.get(), stack.isEmpty() ? 1.2F : 0.8F);
         changedNBT = true;
-        System.out.println("changedNBT");
     }
 
     private void createInventorySlots(Inventory inventory) {
