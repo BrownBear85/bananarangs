@@ -1,9 +1,14 @@
 package com.bonker.bananarangs.common.item;
 
 import com.bonker.bananarangs.Bananarangs;
+import com.bonker.bananarangs.client.ClientUtil;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -25,6 +30,11 @@ public class UpgradeItem extends Item {
         this.incompatibleUpgrades = incompatibleUpgrades;
         UPGRADE_MAP.put(upgrade, this);
         UPGRADE_MODEL_MAP.put(upgrade, new ResourceLocation(Bananarangs.MODID, "item/upgrades/" + upgrade));
+    }
+
+    @Override
+    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pIsAdvanced) {
+        ClientUtil.addUpgradeItemTooltip(pStack, pTooltip);
     }
 
     public String getUpgrade() {

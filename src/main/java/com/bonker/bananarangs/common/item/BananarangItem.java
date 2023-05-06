@@ -1,7 +1,7 @@
 package com.bonker.bananarangs.common.item;
 
 import com.bonker.bananarangs.client.renderer.BananarangBEWLR;
-import com.bonker.bananarangs.client.renderer.ClientUtil;
+import com.bonker.bananarangs.client.ClientUtil;
 import com.bonker.bananarangs.common.entity.BananarangEntity;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;

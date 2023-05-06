@@ -1,4 +1,4 @@
-package com.bonker.bananarangs.client.renderer;
+package com.bonker.bananarangs.client;
 
 import com.bonker.bananarangs.common.item.BananarangItem;
 import com.bonker.bananarangs.common.item.UpgradeItem;
@@ -56,5 +56,11 @@ public class ClientUtil {
             tooltip.add(Component.translatable(key1 + ".description").withStyle(ChatFormatting.DARK_GRAY));
 
         if (!Screen.hasShiftDown() && BananarangItem.isUpgraded(stack)) tooltip.add(Component.translatable("item.bananarangs.bananarang.shift").withStyle(ChatFormatting.DARK_GRAY));
+    }
+
+    public static void addUpgradeItemTooltip(ItemStack stack, List<Component> tooltip) {
+        ResourceLocation loc = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        if (loc == null) return;
+        tooltip.add(Component.translatable("item.bananarangs." + loc.getPath() + ".description").withStyle(ChatFormatting.GRAY));
     }
 }
