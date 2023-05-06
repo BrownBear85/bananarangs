@@ -1,10 +1,13 @@
 package com.bonker.bananarangs.menu;
 
+import com.bonker.bananarangs.common.BRSounds;
 import com.bonker.bananarangs.common.block.BRBlocks;
 import com.bonker.bananarangs.common.item.BRItems;
 import com.bonker.bananarangs.common.item.BananarangItem;
 import com.bonker.bananarangs.common.item.UpgradeItem;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -28,6 +31,7 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
 
     private final ContainerLevelAccess access;
     private final Container container = new SimpleContainer(ANVIL_INVENTORY_SLOT_COUNT + VANILLA_SLOT_COUNT);
+    private boolean changedNBT = false;
 
     public static BananarangAnvilMenu create(int containerId, Inventory inventory, FriendlyByteBuf buf) {
         return new BananarangAnvilMenu(containerId, inventory, ContainerLevelAccess.NULL /*ContainerLevelAccess.create(inventory.player.level, buf.readBlockPos())*/);
@@ -174,12 +178,15 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
     private void onSetBananarang(ItemStack stack) {
         if (stack.isEmpty()) {
             clearSlots();
+            if (changedNBT) playSound(BRSounds.BANANARANG_SLOT_TAKE.get(), 1.1F);
+            changedNBT = false;
         } else {
             UpgradeItem slot0 = UpgradeItem.UPGRADE_MAP.get(BananarangItem.getUpgradeInSlot(stack, 0));
             UpgradeItem slot1 = UpgradeItem.UPGRADE_MAP.get(BananarangItem.getUpgradeInSlot(stack, 1));
             if (slot0 != null) container.setItem(UPGRADE_SLOT_INDEXES.get(0), new ItemStack(slot0));
             if (slot1 != null) container.setItem(UPGRADE_SLOT_INDEXES.get(1), new ItemStack(slot1));
             container.setItem(ITEM_SLOT_INDEX, BananarangItem.getAttachedItem(stack));
+            playSound(BRSounds.BANANARANG_SLOT_PLACE.get(), 0.7F);
         }
     }
 
@@ -191,10 +198,16 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
 
     private void onSetUpgrade(int slot, ItemStack stack) {
         BananarangItem.setUpgradeInSlot(container.getItem(BANANARANG_SLOT_INDEX), slot, stack.isEmpty() ? "" : ((UpgradeItem) stack.getItem()).getUpgrade());
+        playSound(BRSounds.UPGRADE_SLOT_INTERACT.get(), stack.isEmpty() ? 1.0F : 0.8F);
+        changedNBT = true;
+        System.out.println("changedNBT");
     }
 
     private void onSetItem(ItemStack stack) {
         BananarangItem.setAttachedItem(container.getItem(BANANARANG_SLOT_INDEX), stack);
+        playSound(BRSounds.ITEM_SLOT_INTERACT.get(), stack.isEmpty() ? 1.2F : 0.8F);
+        changedNBT = true;
+        System.out.println("changedNBT");
     }
 
     private void createInventorySlots(Inventory inventory) {
@@ -207,5 +220,11 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
         for (int k = 0; k < 9; ++k) {
             this.addSlot(new Slot(inventory, k, 8 + k * 18, 142));
         }
+    }
+
+    private void playSound(SoundEvent sound, float pitch) {
+        access.execute((level, pos) -> {
+            level.playSound(null, pos, sound, SoundSource.BLOCKS, 1.0F, pitch);
+        });
     }
 }

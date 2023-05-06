@@ -1,0 +1,30 @@
+{
+  "anvil_bananarang_slot_place": {
+    "sounds": [
+      "minecraft:item/armor/equip_generic1",
+      "minecraft:item/armor/equip_generic2",
+      "minecraft:item/armor/equip_generic3",
+      "minecraft:item/armor/equip_generic4",
+      "minecraft:item/armor/equip_generic5",
+      "minecraft:item/armor/equip_generic6"
+    ]
+  },
+  "anvil_bananarang_slot_take": {
+    "sounds": [
+      "minecraft:random/anvil_use"
+    ]
+  },
+  "anvil_upgrade_slot_interact": {
+    "sounds": [
+      "minecraft:random/click"
+    ]
+  },
+  "anvil_item_slot_interact": {
+    "sounds": [
+      "minecraft:item/armor/equip_netherite1",
+      "minecraft:item/armor/equip_netherite2",
+      "minecraft:item/armor/equip_netherite3",
+      "minecraft:item/armor/equip_netherite4"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 package com.bonker.bananarangs.common.entity;
 
-import com.bonker.bananarangs.common.damage.BRDamageSources;
+import com.bonker.bananarangs.common.BRDamage;
 import com.bonker.bananarangs.common.item.BRItems;
 import com.bonker.bananarangs.common.item.BananarangItem;
 import com.bonker.bananarangs.util.MathUtil;
@@ -30,8 +30,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.event.ForgeEventFactory;
-
-import java.util.List;
 
 public class BananarangEntity extends Projectile implements ItemSupplier {
 
@@ -151,7 +149,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
             if (piercing) { // nerf piercing damage for balance and decrease damage if it has a pickaxe
                 damage *= 0.5;
             }
-            entity.hurt(new BRDamageSources.BananarangDamageSource(piercing, this, getOwner()), damage);
+            entity.hurt(new BRDamage.BananarangDamageSource(piercing, this, getOwner()), damage);
             if (!piercing) { // if it pierces, it doesn't knockback
                 Vec3 delta = getDeltaMovement().multiply(1, 0, 1).normalize(); // remove the vertical delta of the bananarang
                 if (fling) {
