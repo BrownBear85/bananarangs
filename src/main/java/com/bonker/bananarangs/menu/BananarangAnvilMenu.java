@@ -171,8 +171,9 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
 
     private boolean canPlaceUpgrade(int index, ItemStack upgrade) {
         ItemStack otherUpgrade = container.getItem(UPGRADE_SLOT_INDEXES.get(index == 0 ? 1 : 0));
-        if (otherUpgrade.isEmpty() || !(otherUpgrade.getItem() instanceof UpgradeItem)) return true;
-        return ((UpgradeItem) otherUpgrade.getItem()).isCompatible(((UpgradeItem) upgrade.getItem()).getUpgrade());
+        if (otherUpgrade.isEmpty() || !(otherUpgrade.getItem() instanceof UpgradeItem otherUpgradeItem) || !(upgrade.getItem() instanceof UpgradeItem upgradeItem)) return true;
+        return otherUpgradeItem.isCompatible(upgradeItem.getUpgrade()) &&
+                upgradeItem.isCompatible(otherUpgradeItem.getUpgrade());
     }
 
     private void onSetBananarang(ItemStack stack) {

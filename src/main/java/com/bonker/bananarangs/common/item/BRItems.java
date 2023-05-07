@@ -34,7 +34,7 @@ public class BRItems {
     public static final RegistryObject<UpgradeItem> DAMAGE_UPGRADE_3 = ITEMS.register("damage_upgrade_3",
             () -> new UpgradeItem(props(), "damage_3", UpgradeItem.DAMAGE_UPGRADES));
     public static final RegistryObject<UpgradeItem> FLAMING_UPGRADE = ITEMS.register("flaming_upgrade",
-            () -> new UpgradeItem(props(), "flaming", UpgradeItem.NONE));
+            () -> new UpgradeItem(props(), "flaming", UpgradeItem.EDGE_UPGRADES));
     public static final RegistryObject<UpgradeItem> FLING_UPGRADE = ITEMS.register("fling_upgrade",
             () -> new UpgradeItem(props(), "fling", UpgradeItem.CENTER_UPGRADES));
     public static final RegistryObject<UpgradeItem> PIERCING_UPGRADE = ITEMS.register("piercing_upgrade",

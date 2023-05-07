@@ -21,7 +21,7 @@ public class UpgradeItem extends Item {
     public static final List<String> DAMAGE_UPGRADES = List.of("damage_1", "damage_2", "damage_3");
     public static final List<String> CENTER_UPGRADES = List.of("fling", "piercing");
     public static final List<String> POWER_UPGRADES = List.of("power_1", "power_2", "power_3");
-    public static final List<String> EDGE_UPGRADES = List.of("flaming, sticky");
+    public static final List<String> EDGE_UPGRADES = List.of("flaming", "sticky");
     public static final List<String> NONE = List.of();
     public static final Map<String, UpgradeItem> UPGRADE_MAP = new HashMap<>();
     public static final Map<String, ResourceLocation> UPGRADE_MODEL_MAP = new HashMap<>();
