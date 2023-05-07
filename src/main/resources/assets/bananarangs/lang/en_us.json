@@ -14,6 +14,7 @@
   "item.bananarangs.power_upgrade_1": "Throw+ Upgrade",
   "item.bananarangs.power_upgrade_2": "Throw++ Upgrade",
   "item.bananarangs.power_upgrade_3": "Throw+++ Upgrade",
+  "item.bananarangs.sticky_upgrade": "Sticky Upgrade",
 
   "item.bananarangs.damage_upgrade_1.description": "Damage increased by 1.5 hearts",
   "item.bananarangs.damage_upgrade_2.description": "Damage increased by 3.0 hearts",
@@ -25,6 +26,7 @@
   "item.bananarangs.power_upgrade_1.description": "Throwing power increased by 40%",
   "item.bananarangs.power_upgrade_2.description": "Throwing power increased by 80%",
   "item.bananarangs.power_upgrade_3.description": "Throwing power increased by 120%",
+  "item.bananarangs.sticky_upgrade.description": "Causes items and victims to stick when hit",
 
   "item.bananarangs.bananarang.upgrades": "Upgrades:",
   "item.bananarangs.bananarang.no_upgrade": " - Empty -",

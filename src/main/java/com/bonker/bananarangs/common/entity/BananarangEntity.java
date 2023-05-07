@@ -2,9 +2,11 @@ package com.bonker.bananarangs.common.entity;
 
 import com.bonker.bananarangs.common.BRDamage;
 import com.bonker.bananarangs.common.item.BRItems;
-import com.bonker.bananarangs.common.item.BananarangItem;
+import static com.bonker.bananarangs.common.item.BananarangItem.*;
+
 import com.bonker.bananarangs.util.MathUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -12,7 +14,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -27,14 +28,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.event.ForgeEventFactory;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class BananarangEntity extends Projectile implements ItemSupplier {
 
@@ -50,17 +50,18 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     private boolean hasPickaxe = false;
     private ItemStack attachedItem = ItemStack.EMPTY;
     private float pickaxeEfficiency = 0;
-    private boolean flaming = false;
     private boolean piercing = false;
     private boolean fling = false;
     private int damageUpgrade = 0;
+    private boolean sticky = false;
+    private ArrayList<Entity> stuckEntities = new ArrayList<>();
 
     public BananarangEntity(EntityType<? extends BananarangEntity> entityType, Level level) {
         super(entityType, level);
     }
 
     public static void shootFromEntity(ServerLevel level, LivingEntity shooter, ItemStack stack) {
-        double power = 0.9 * (1 + 0.4 * BananarangItem.powerUpgrade(stack));
+        double power = 0.9 * (1 + 0.4 * powerUpgrade(stack));
         BREntities.BANANARANG.get().spawn(level, null, (entity) -> {
             entity.setOwner(shooter);
             entity.setItem(stack);
@@ -140,6 +141,22 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         setPos(posOld);
         move(MoverType.SELF, getDeltaMovement());
 
+        if (sticky) {
+            stuckEntities.addAll(level.getEntities(EntityType.ITEM, getBoundingBox().inflate(2), e -> true));
+            for (int i = 0; i < stuckEntities.size(); i++) {
+                Entity entity = stuckEntities.get(i);
+                if (entity.distanceToSqr(this) > 16) {
+                    stuckEntities.remove(entity);
+                    continue;
+                }
+                entity.teleportTo(getX(), getY(), getZ());
+                entity.setDeltaMovement(getDeltaMovement());
+                for (int j = 0; j < 4; j++) {
+                    level.addParticle(ParticleTypes.ITEM_SLIME, getX(), getY(), getZ(), level.random.nextFloat() * 0.1, level.random.nextFloat() * 0.1, level.random.nextFloat() * 0.1);
+                }
+            }
+        }
+
         if (++age >= 200) {
             drop();
         }
@@ -163,13 +180,16 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
                     double knockbackResistance = entity instanceof LivingEntity livingEntity ? Math.max(0, 1 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)) : 0;
                     delta = delta.scale(0.1 * knockbackResistance);
                 }
-                entity.push(delta.x, fling ? 0.5 : 0.01, delta.z); // if fling, fling the entity in the air, otherwise do normal vertical knockback
+                if (!sticky) {
+                    entity.push(delta.x, fling ? 0.5 : 0.01, delta.z); // if fling, fling the entity in the air, otherwise do normal vertical knockback
+                }
                 if (isOnFire()) {
                     entity.setSecondsOnFire(5);
                 }
-            }
-            if (!piercing) {
                 setReturning(true);
+            }
+            if (sticky) {
+                stuckEntities.add(entity);
             }
         }
     }
@@ -181,19 +201,20 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
 
     private void updateAttachedItem() {
         ItemStack bananarang = getItem();
-        BananarangItem.setAttachedItem(bananarang, attachedItem);
+        setAttachedItem(bananarang, attachedItem);
         setItem(bananarang);
     }
 
     public void setUpgrades(ItemStack bananarang) {
-        hasPickaxe = BananarangItem.hasPickaxe(bananarang);
-        attachedItem = BananarangItem.getAttachedItem(bananarang);
-        pickaxeEfficiency = BananarangItem.pickaxeEfficiency(bananarang);
-        flaming = BananarangItem.hasUpgrade(bananarang, "flaming");
+        hasPickaxe = hasPickaxe(bananarang);
+        attachedItem = getAttachedItem(bananarang);
+        pickaxeEfficiency = pickaxeEfficiency(bananarang);
+        boolean flaming = hasUpgrade(bananarang, "flaming");
         if (flaming) setSecondsOnFire(100);
-        piercing = BananarangItem.hasUpgrade(bananarang, "piercing");
-        fling = BananarangItem.hasUpgrade(bananarang, "fling");
-        damageUpgrade = BananarangItem.damageUpgrade(bananarang);
+        piercing = hasUpgrade(bananarang, "piercing");
+        fling = hasUpgrade(bananarang, "fling");
+        damageUpgrade = damageUpgrade(bananarang);
+        sticky = hasUpgrade(bananarang, "sticky");
     }
 
     private boolean canMine(BlockState state, BlockPos pos) {

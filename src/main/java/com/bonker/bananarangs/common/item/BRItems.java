@@ -14,6 +14,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.List;
+
 @Mod.EventBusSubscriber(modid = Bananarangs.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class BRItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Bananarangs.MODID);
@@ -45,6 +47,8 @@ public class BRItems {
             () -> new UpgradeItem(props(), "power_2", UpgradeItem.POWER_UPGRADES));
     public static final RegistryObject<UpgradeItem> POWER_UPGRADE_3 = ITEMS.register("power_upgrade_3",
             () -> new UpgradeItem(props(), "power_3", UpgradeItem.POWER_UPGRADES));
+    public static final RegistryObject<UpgradeItem> STICKY_UPGRADE = ITEMS.register("sticky_upgrade",
+            () -> new UpgradeItem(props(), "sticky", UpgradeItem.EDGE_UPGRADES));
     public static final RegistryObject<BlockItem> BANANARANG_ANVIL = ITEMS.register("bananarang_anvil",
             () -> new BlockItem(BRBlocks.BANANARANG_ANVIL.get(), props()));
 
@@ -70,6 +74,7 @@ public class BRItems {
                             populator.accept(POWER_UPGRADE_2.get());
                             populator.accept(POWER_UPGRADE_3.get());
                             populator.accept(FLAMING_UPGRADE.get());
+                            populator.accept(STICKY_UPGRADE.get());
                             populator.accept(PIERCING_UPGRADE.get());
                             populator.accept(FLING_UPGRADE.get());
                             populator.accept(PICKAXE_UPGRADE.get());

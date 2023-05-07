@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "WBW",
+    "#X#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:slime_ball"
+    },
+    "W": {
+      "item": "minecraft:wheat"
+    },
+    "B": {
+      "item": "bananarangs:blank_upgrade"
+    },
+    "X": {
+      "item": "minecraft:water_bucket"
+    }
+  },
+  "result": {
+    "item": "bananarangs:sticky_upgrade",
+    "count": 1
+  }
+}
