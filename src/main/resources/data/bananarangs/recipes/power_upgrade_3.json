@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#D#",
+    "BGB",
+    "#D#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:netherrack"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "B": {
+      "item": "bananarangs:blank_upgrade"
+    },
+    "G": {
+      "item": "minecraft:gold_block"
+    }
+  },
+  "result": {
+    "item": "bananarangs:power_upgrade_3",
+    "count": 1
+  }
+}

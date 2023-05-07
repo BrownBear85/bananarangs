@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#F#",
+    "FBF",
+    "#F#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:firework_rocket"
+    },
+    "F": {
+      "item": "minecraft:feather"
+    },
+    "B": {
+      "item": "bananarangs:blank_upgrade"
+    }
+  },
+  "result": {
+    "item": "bananarangs:power_upgrade_1",
+    "count": 1
+  }
+}

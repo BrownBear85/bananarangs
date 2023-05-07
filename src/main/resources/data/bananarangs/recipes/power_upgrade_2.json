@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#i#",
+    "BIB",
+    "#i#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:leather"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "bananarangs:blank_upgrade"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    }
+  },
+  "result": {
+    "item": "bananarangs:power_upgrade_2",
+    "count": 1
+  }
+}
