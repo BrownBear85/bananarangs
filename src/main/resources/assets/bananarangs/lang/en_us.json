@@ -44,5 +44,8 @@
   "block.bananarangs.bananarang_anvil": "Bananarang Anvil",
 
   "container.bananarang_anvil": "Apply Upgrades",
-  "container.bananarang_anvil.place_bananarang": "Place bananarang"
+  "container.bananarang_anvil.place_bananarang": "Place bananarang",
+
+  "sound.bananarangs.bananarang_anvil_use": "Bananarang anvil used",
+  "sound.bananarangs.bananarang_throw": "Bananarang thrown"
 }

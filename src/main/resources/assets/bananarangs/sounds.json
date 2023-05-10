@@ -10,6 +10,7 @@
     ]
   },
   "anvil_bananarang_slot_take": {
+    "subtitle": "sound.bananarangs.bananarang_anvil_use",
     "sounds": [
       "minecraft:random/anvil_use"
     ]
