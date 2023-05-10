@@ -21,6 +21,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
+import java.util.List;
+
 public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
 
     public static final ResourceLocation BASE_LOC = new ResourceLocation(Bananarangs.MODID, "item/upgrades/bananarang_base");
@@ -31,6 +33,8 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
             return BananarangBEWLR.INSTANCE;
         }
     };
+    public static final List<String> BOTTOM_UPGRADES = List.of("flaming", "sticky");
+    public static final List<String> TOP_UPGRADES = List.of("piercing", "fling", "pickaxe");
 
     public BananarangBEWLR(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {
         super(pBlockEntityRenderDispatcher, pEntityModelSet);
@@ -43,9 +47,10 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
 
         String layer1 = BananarangItem.getUpgradeInSlot(stack, 0);
         String layer2 = BananarangItem.getUpgradeInSlot(stack, 1);
-        if (layer2.equals("flaming")) { // always render flaming below other upgrades
+        if (BOTTOM_UPGRADES.contains(layer2) || TOP_UPGRADES.contains(layer1)) { // swap upgrade render layers if you need to
+            String temp = layer2;
             layer2 = layer1;
-            layer1 = "flaming";
+            layer1 = temp;
         }
 
         boolean shouldRender1 = UpgradeItem.isValid(layer1);
