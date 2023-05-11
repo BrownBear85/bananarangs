@@ -16,21 +16,12 @@ import org.jetbrains.annotations.Nullable;
 public class BRDamage {
     public static final ResourceKey<DamageType> BANANARANG = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Bananarangs.MODID, "bananarang"));
     public static final ResourceKey<DamageType> PIERCING_BANANARANG = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Bananarangs.MODID, "piercing_bananarang"));
-
-    public static BananarangDamageSource bananarang(BananarangEntity direct, @Nullable Entity thrower) {
-        return new BananarangDamageSource(false, direct, thrower);
-    }
-
-    public static BananarangDamageSource piercingBananarang(BananarangEntity direct, @Nullable Entity thrower) {
-        return new BananarangDamageSource(true, direct, thrower);
-    }
+    public static final ResourceKey<DamageType> EXPLOSIVE_BANANARANG = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Bananarangs.MODID, "explosive_bananarang"));
 
     public static class BananarangDamageSource extends DamageSource {
-
-        public BananarangDamageSource(boolean piercing, BananarangEntity direct, @Nullable Entity thrower) {
+        public BananarangDamageSource(BRDamage.Type type, BananarangEntity direct, @Nullable Entity thrower) {
             super(direct.level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
-                    .getHolderOrThrow(piercing ? BRDamage.PIERCING_BANANARANG : BRDamage.BANANARANG),
-                    direct, thrower);
+                    .getHolderOrThrow(type.get()), direct, thrower);
         }
 
         @Override
@@ -44,6 +35,20 @@ public class BRDamage {
             }
             return super.getLocalizedDeathMessage(pLivingEntity);
         }
+
     }
 
+    public enum Type {
+        NORMAL(BANANARANG), PIERCING(PIERCING_BANANARANG), EXPLOSIVE(EXPLOSIVE_BANANARANG);
+
+        private final ResourceKey<DamageType> damageType;
+
+        Type(ResourceKey<DamageType> damageType) {
+            this.damageType = damageType;
+        }
+
+        public ResourceKey<DamageType> get() {
+            return damageType;
+        }
+    }
 }

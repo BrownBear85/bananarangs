@@ -15,6 +15,8 @@
   "item.bananarangs.power_upgrade_2": "Throw++ Upgrade",
   "item.bananarangs.power_upgrade_3": "Throw+++ Upgrade",
   "item.bananarangs.sticky_upgrade": "Sticky Upgrade",
+  "item.bananarangs.explosive_upgrade": "Explosive Upgrade",
+
 
   "item.bananarangs.damage_upgrade_1.description": "Damage increased by 1.5 hearts",
   "item.bananarangs.damage_upgrade_2.description": "Damage increased by 3.0 hearts",
@@ -27,6 +29,7 @@
   "item.bananarangs.power_upgrade_2.description": "Throwing power increased by 80%",
   "item.bananarangs.power_upgrade_3.description": "Throwing power increased by 120%",
   "item.bananarangs.sticky_upgrade.description": "Causes items and victims to stick when hit",
+  "item.bananarangs.explosive_upgrade.description": "Explodes on impact, extra cooldown\nDamage upgrades buff explosion power",
 
   "item.bananarangs.bananarang.upgrades": "Upgrades:",
   "item.bananarangs.bananarang.no_upgrade": " - Empty -",
@@ -40,6 +43,8 @@
   "death.attack.bananarang.item": "%1$s was peeled by %2$s using %3$s",
   "death.attack.piercingBananarang": "%1$s was poked by %2$s",
   "death.attack.piercingBananarang.item": "%1$s was poked by %2$s using %3$s",
+  "death.attack.explosiveBananarang": "%1$s went out with a bang-nana because of %2$s",
+  "death.attack.explosiveBananarang.item": "%1$s went out with a bang-nana because of %2$s using %3$s",
 
   "block.bananarangs.bananarang_anvil": "Bananarang Anvil",
 

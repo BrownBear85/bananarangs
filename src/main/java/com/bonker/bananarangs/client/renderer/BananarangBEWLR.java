@@ -33,7 +33,7 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
             return BananarangBEWLR.INSTANCE;
         }
     };
-    public static final List<String> BOTTOM_UPGRADES = List.of("flaming", "sticky");
+    public static final List<String> BOTTOM_UPGRADES = List.of("flaming", "sticky", "explosive");
     public static final List<String> TOP_UPGRADES = List.of("piercing", "fling", "pickaxe");
 
     public BananarangBEWLR(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {

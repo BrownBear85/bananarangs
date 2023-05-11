@@ -32,7 +32,8 @@ public class BananarangItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide()) {
             BananarangEntity.shootFromEntity((ServerLevel) level, player, Util.make(stack.copy(), stack1 -> stack1.setCount(1)));
-            player.setItemInHand(hand, Util.make(stack, stack1 -> stack1.shrink(1)));
+            if (hasUpgrade(stack, "explosive")) player.getCooldowns().addCooldown(stack.getItem(), 20);
+            stack.shrink(1);
         }
         return InteractionResultHolder.success(stack);
     }

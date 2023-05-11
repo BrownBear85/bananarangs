@@ -49,6 +49,8 @@ public class BRItems {
             () -> new UpgradeItem(props(), "power_3", UpgradeItem.POWER_UPGRADES));
     public static final RegistryObject<UpgradeItem> STICKY_UPGRADE = ITEMS.register("sticky_upgrade",
             () -> new UpgradeItem(props(), "sticky", UpgradeItem.EDGE_UPGRADES));
+    public static final RegistryObject<UpgradeItem> EXPLOSIVE_UPGRADE = ITEMS.register("explosive_upgrade",
+            () -> new UpgradeItem(props(), "explosive", List.of("pickaxe")));
     public static final RegistryObject<BlockItem> BANANARANG_ANVIL = ITEMS.register("bananarang_anvil",
             () -> new BlockItem(BRBlocks.BANANARANG_ANVIL.get(), props()));
 
@@ -66,7 +68,6 @@ public class BRItems {
                         .displayItems((parameters, populator) -> {
                             populator.accept(BANANARANG.get());
                             populator.accept(BANANARANG_ANVIL.get());
-                            populator.accept(BANANA.get());
                             populator.accept(DAMAGE_UPGRADE_1.get());
                             populator.accept(DAMAGE_UPGRADE_2.get());
                             populator.accept(DAMAGE_UPGRADE_3.get());
@@ -78,6 +79,8 @@ public class BRItems {
                             populator.accept(PIERCING_UPGRADE.get());
                             populator.accept(FLING_UPGRADE.get());
                             populator.accept(PICKAXE_UPGRADE.get());
+                            populator.accept(EXPLOSIVE_UPGRADE.get());
+                            populator.accept(BANANA.get());
                             populator.accept(BLANK_UPGRADE.get());
                         }));
     }

@@ -14,6 +14,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -50,11 +52,13 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     private boolean hasPickaxe = false;
     private ItemStack attachedItem = ItemStack.EMPTY;
     private float pickaxeEfficiency = 0;
+    private boolean flaming = false;
     private boolean piercing = false;
     private boolean fling = false;
     private int damageUpgrade = 0;
     private boolean sticky = false;
-    private ArrayList<Entity> stuckEntities = new ArrayList<>();
+    private boolean explosive = false;
+    private final ArrayList<Entity> stuckEntities = new ArrayList<>();
 
     public BananarangEntity(EntityType<? extends BananarangEntity> entityType, Level level) {
         super(entityType, level);
@@ -76,15 +80,18 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         Entity owner = getOwner();
         if (owner != null) {
             Vec3 targetPos = owner.getEyePosition().subtract(0, HITBOX_SIZE / 2, 0);
-            if (this.isReturning()) {                           // if it is coming back,
-                if (shouldDrop(targetPos)) {                    // and it's close to the player,
-                    if (owner instanceof ServerPlayer player) { //
-                        if (player.addItem(getItem())) {        // then give  it back to the player
-                            discard();                          // and delete the entity
-                        } else {                                //
-                            drop();                             // or drop it as an item
+            if (this.isReturning()) {
+                if (!owner.isAlive()) {
+                    drop();
+                }
+                if (shouldDrop(targetPos)) {
+                    if (owner instanceof ServerPlayer player) {
+                        if (player.getAbilities().instabuild || player.addItem(getItem())) {
+                            discard();
+                        } else {
+                            drop();
                         }
-                        player.getCooldowns().addCooldown(BRItems.BANANARANG.get(), 5);
+                        player.getCooldowns().addCooldown(BRItems.BANANARANG.get(), 10);
                     }
                 }
 
@@ -163,6 +170,14 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     }
 
     @Override
+    protected void onHit(HitResult pResult) {
+        if (explosive && !isReturning()) {
+            explode();
+        }
+        super.onHit(pResult);
+    }
+
+    @Override
     protected void onHitEntity(EntityHitResult hitResult) {
         Entity entity = hitResult.getEntity();
         Entity owner = getOwner();
@@ -171,7 +186,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
             if (piercing) { // nerf piercing damage for balance and decrease damage if it has a pickaxe
                 damage *= 0.5;
             }
-            entity.hurt(new BRDamage.BananarangDamageSource(piercing, this, getOwner()), damage);
+            entity.hurt(createDamageSource(), damage);
             if (!piercing) { // if it pierces, it doesn't knockback
                 Vec3 delta = getDeltaMovement().multiply(1, 0, 1).normalize(); // remove the vertical delta of the bananarang
                 if (fling) {
@@ -194,9 +209,32 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         }
     }
 
+    private void explode() {
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.playSeededSound(null, getX(), getY(), getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 0.4F, 0.8F + level.random.nextFloat() * 0.3F, 42L);
+            serverLevel.sendParticles(ParticleTypes.EXPLOSION, getX(), getY(), getZ(), 5, 1.5, 1.5, 1.5, 0);
+        }
+        float radius = switch (damageUpgrade) {
+            case 1 -> 1.3F;
+            case 2 -> 1.8F;
+            case 3 -> 2.4F;
+            default -> 1.0F;
+        };
+        Vec3 pos = position().add(getDeltaMovement().multiply(0.3, 0.3, 0.3));
+        level.explode(this, createDamageSource(), null, pos.x, pos.y, pos.z, radius, flaming, Level.ExplosionInteraction.TNT, false);
+        setReturning(true);
+    }
+
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
         return distance < 4096;
+    }
+
+    private DamageSource createDamageSource() {
+        BRDamage.Type damageType = BRDamage.Type.NORMAL;
+        if (piercing) damageType = BRDamage.Type.PIERCING;
+        if (explosive) damageType = BRDamage.Type.EXPLOSIVE;
+        return new BRDamage.BananarangDamageSource(damageType, this, getOwner());
     }
 
     private void updateAttachedItem() {
@@ -209,12 +247,13 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         hasPickaxe = hasPickaxe(bananarang);
         attachedItem = getAttachedItem(bananarang);
         pickaxeEfficiency = pickaxeEfficiency(bananarang);
-        boolean flaming = hasUpgrade(bananarang, "flaming");
+        flaming = hasUpgrade(bananarang, "flaming");
         if (flaming) setSecondsOnFire(100);
         piercing = hasUpgrade(bananarang, "piercing");
         fling = hasUpgrade(bananarang, "fling");
         damageUpgrade = damageUpgrade(bananarang);
         sticky = hasUpgrade(bananarang, "sticky");
+        explosive = hasUpgrade(bananarang, "explosive");
     }
 
     private boolean canMine(BlockState state, BlockPos pos) {
