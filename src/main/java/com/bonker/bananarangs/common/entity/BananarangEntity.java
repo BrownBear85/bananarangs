@@ -5,6 +5,7 @@ import com.bonker.bananarangs.common.item.BRItems;
 import static com.bonker.bananarangs.common.item.BananarangItem.*;
 
 import com.bonker.bananarangs.util.MathUtil;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -86,13 +87,20 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
                 }
                 if (shouldDrop(targetPos)) {
                     if (owner instanceof ServerPlayer player) {
+                        for (Entity entity : stuckEntities) {
+                            entity.stopRiding();
+                            entity.setDeltaMovement(getDeltaMovement());
+                        }
                         if (player.getAbilities().instabuild || player.addItem(getItem())) {
                             discard();
                         } else {
                             drop();
                         }
                         player.getCooldowns().addCooldown(BRItems.BANANARANG.get(), 10);
+                        return;
                     }
+                    drop();
+                    return;
                 }
 
                 this.setDeltaMovement(this.getDeltaMovement().scale(0.98D).add( // stolen from ThrownTrident.java
@@ -156,8 +164,9 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
                     stuckEntities.remove(entity);
                     continue;
                 }
-                entity.teleportTo(getX(), getY(), getZ());
-                entity.setDeltaMovement(getDeltaMovement());
+                if (!getPassengers().contains(entity)) {
+                    entity.startRiding(this, true);
+                }
                 for (int j = 0; j < 4; j++) {
                     level.addParticle(ParticleTypes.ITEM_SLIME, getX(), getY(), getZ(), level.random.nextFloat() * 0.1, level.random.nextFloat() * 0.1, level.random.nextFloat() * 0.1);
                 }
@@ -228,6 +237,11 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
         return distance < 4096;
+    }
+
+    @Override
+    public double getPassengersRidingOffset() {
+        return -0.2;
     }
 
     private DamageSource createDamageSource() {
