@@ -35,6 +35,7 @@ public class BananarangItem extends Item {
             if (!player.getCooldowns().isOnCooldown(stack.getItem()) && hasUpgrade(stack, "explosive")) player.getCooldowns().addCooldown(stack.getItem(), 40);
             stack.shrink(1);
         }
+
         return InteractionResultHolder.success(stack);
     }
 
