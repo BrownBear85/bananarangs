@@ -27,5 +27,17 @@
       "minecraft:item/armor/equip_netherite3",
       "minecraft:item/armor/equip_netherite4"
     ]
+  },
+  "bananarang_throw": {
+    "subtitle": "sound.bananarangs.bananarang_throw",
+    "sounds": [
+      "bananarangs:bananarang_throw1",
+      "bananarangs:bananarang_throw2",
+      "bananarangs:bananarang_throw3",
+      "bananarangs:bananarang_throw4",
+      "bananarangs:bananarang_throw5",
+      "bananarangs:bananarang_throw6",
+      "bananarangs:bananarang_throw7"
+    ]
   }
 }

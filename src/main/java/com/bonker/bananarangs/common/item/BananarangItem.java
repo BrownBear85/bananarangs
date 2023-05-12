@@ -2,10 +2,12 @@ package com.bonker.bananarangs.common.item;
 
 import com.bonker.bananarangs.client.renderer.BananarangBEWLR;
 import com.bonker.bananarangs.client.ClientUtil;
+import com.bonker.bananarangs.common.BRSounds;
 import com.bonker.bananarangs.common.entity.BananarangEntity;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +37,7 @@ public class BananarangItem extends Item {
             if (!player.getCooldowns().isOnCooldown(stack.getItem()) && hasUpgrade(stack, "explosive")) player.getCooldowns().addCooldown(stack.getItem(), 40);
             stack.shrink(1);
         }
-
+        level.playSound(player, player.getX(), player.getY(), player.getZ(), BRSounds.BANANARANG_THROW.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
         return InteractionResultHolder.success(stack);
     }
 

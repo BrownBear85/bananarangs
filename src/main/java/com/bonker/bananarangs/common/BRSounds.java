@@ -14,6 +14,7 @@ public class BRSounds {
     public static final RegistryObject<SoundEvent> BANANARANG_SLOT_TAKE = registerSound("anvil_bananarang_slot_take");
     public static final RegistryObject<SoundEvent> UPGRADE_SLOT_INTERACT = registerSound("anvil_upgrade_slot_interact");
     public static final RegistryObject<SoundEvent> ITEM_SLOT_INTERACT = registerSound("anvil_item_slot_interact");
+    public static final RegistryObject<SoundEvent> BANANARANG_THROW = registerSound("bananarang_throw");
 
     private static RegistryObject<SoundEvent> registerSound(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Bananarangs.MODID, name)));
