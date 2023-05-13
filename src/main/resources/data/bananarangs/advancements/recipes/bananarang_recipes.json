@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_iron": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:iron_ingot"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_iron"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bananarangs:banana",
+      "bananarangs:bananarang",
+      "bananarangs:bananarang_anvil",
+      "bananarangs:blank_upgrade",
+      "bananarangs:damage_upgrade_1",
+      "bananarangs:damage_upgrade_2",
+      "bananarangs:damage_upgrade_3",
+      "bananarangs:explosive_upgrade",
+      "bananarangs:flaming_upgrade",
+      "bananarangs:pickaxe_upgrade",
+      "bananarangs:piercing_upgrade",
+      "bananarangs:power_upgrade_1",
+      "bananarangs:power_upgrade_2",
+      "bananarangs:power_upgrade_3",
+      "bananarangs:sticky_upgrade",
+      "bananarangs:fling_upgrade"
+    ]
+  }
+}

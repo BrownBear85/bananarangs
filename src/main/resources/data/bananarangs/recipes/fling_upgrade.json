@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#c#",
+    "PBP",
+    "#c#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:redstone"
+    },
+    "c": {
+      "item": "minecraft:copper_ingot"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "B": {
+      "item": "bananarangs:blank_upgrade"
+    }
+  },
+  "result": {
+    "item": "bananarangs:fling_upgrade",
+    "count": 1
+  }
+}

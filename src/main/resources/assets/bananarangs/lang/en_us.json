@@ -52,5 +52,7 @@
   "container.bananarang_anvil.place_bananarang": "Place bananarang",
 
   "sound.bananarangs.bananarang_anvil_use": "Bananarang anvil used",
-  "sound.bananarangs.bananarang_throw": "Bananarang thrown"
+  "sound.bananarangs.bananarang_throw": "Bananarang thrown",
+
+  "item.bananarangs.???": "why do you have this?????"
 }

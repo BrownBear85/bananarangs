@@ -1,8 +1,10 @@
 package com.bonker.bananarangs.client.renderer;
 
 import com.bonker.bananarangs.Bananarangs;
+import com.bonker.bananarangs.common.item.BRItems;
 import com.bonker.bananarangs.common.item.BananarangItem;
 import com.bonker.bananarangs.common.item.UpgradeItem;
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -27,17 +29,38 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
 
     public static final ResourceLocation BASE_LOC = new ResourceLocation(Bananarangs.MODID, "item/upgrades/bananarang_base");
     public static BananarangBEWLR INSTANCE;
-    public static final IClientItemExtensions EXTENSION = new IClientItemExtensions() {
+    public static IClientItemExtensions EXTENSION() {return new IClientItemExtensions() {
         @Override
         public BlockEntityWithoutLevelRenderer getCustomRenderer() {
             return BananarangBEWLR.INSTANCE;
         }
-    };
+    };}
     public static final List<String> BOTTOM_UPGRADES = List.of("flaming", "sticky", "explosive");
     public static final List<String> TOP_UPGRADES = List.of("piercing", "fling", "pickaxe");
 
+    private List<String> upgrades;
+    private int upgrade1 = 0;
+    private int upgrade2 = 0;
+    boolean upgrade1switched = false;
+    long lastUpgrade2switched = 0;
+
     public BananarangBEWLR(BlockEntityRenderDispatcher pBlockEntityRenderDispatcher, EntityModelSet pEntityModelSet) {
         super(pBlockEntityRenderDispatcher, pEntityModelSet);
+    }
+
+    private void fillUpgradeList() {
+        if (upgrades == null) upgrades = new ImmutableList.Builder<String>().addAll(UpgradeItem.UPGRADE_MAP.keySet()).build();
+    }
+
+    private int nextUpgrade(int currentIndex, String otherUpgrade) {
+        UpgradeItem upgrade = UpgradeItem.UPGRADE_MAP.get(otherUpgrade);
+        if (++currentIndex == upgrades.size()) currentIndex = 0;
+        String nextUpgrade = upgrades.get(currentIndex);
+        while (upgrade == null || !upgrade.isCompatible(nextUpgrade)) {
+            if (++currentIndex == upgrades.size()) currentIndex = 0;
+            nextUpgrade = upgrades.get(currentIndex);
+        }
+        return currentIndex;
     }
 
     @Override
@@ -45,8 +68,28 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
         poseStack.popPose(); // remove translations from ItemRenderer
         poseStack.pushPose();
 
-        String layer1 = BananarangItem.getUpgradeInSlot(stack, 0);
-        String layer2 = BananarangItem.getUpgradeInSlot(stack, 1);
+        String layer1, layer2;
+        if (stack.getItem() == BRItems.TAB_ICON.get()) {
+            fillUpgradeList();
+
+            long seconds = System.currentTimeMillis() / 1000;
+            if (seconds % 5 == 0 && !upgrade1switched) {
+                upgrade1 = nextUpgrade(upgrade1, upgrades.get(upgrade2));
+                upgrade1switched = true;
+            } else {
+                upgrade1switched = seconds % 5 == 0;
+                if (seconds % 5 != 0 && seconds > lastUpgrade2switched) {
+                    upgrade2 = nextUpgrade(upgrade2, upgrades.get(upgrade1));
+                    lastUpgrade2switched = seconds;
+                }
+            }
+
+            layer1 = upgrades.get(upgrade1);
+            layer2 = upgrades.get(upgrade2);
+        } else {
+            layer1 = BananarangItem.getUpgradeInSlot(stack, 0);
+            layer2 = BananarangItem.getUpgradeInSlot(stack, 1);
+        }
         if (BOTTOM_UPGRADES.contains(layer2) || TOP_UPGRADES.contains(layer1)) { // swap upgrade render layers if you need to
             String temp = layer2;
             layer2 = layer1;
@@ -60,12 +103,12 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
         if (shouldRender1) topLayer = 1;
         if (shouldRender2) topLayer = 2;
 
-        renderUpgrade(stack, BASE_LOC, displayContext, poseStack, bufferSource, RenderType.solid(), topLayer == 0, packedLight, packedOverlay);
-        if (shouldRender1) renderUpgrade(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer1), displayContext, poseStack, bufferSource, RenderType.translucent(), topLayer == 1, packedLight, packedOverlay);
-        if (shouldRender2) renderUpgrade(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer2), displayContext, poseStack, bufferSource, RenderType.translucent(), topLayer == 2, packedLight, packedOverlay); // if layer 2 is valid, it will always have glint
+        render(stack, BASE_LOC, displayContext, poseStack, bufferSource, RenderType.solid(), topLayer == 0, packedLight, packedOverlay);
+        if (shouldRender1) render(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer1), displayContext, poseStack, bufferSource, RenderType.translucent(), topLayer == 1, packedLight, packedOverlay);
+        if (shouldRender2) render(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer2), displayContext, poseStack, bufferSource, RenderType.translucent(), topLayer == 2, packedLight, packedOverlay); // if layer 2 is valid, it will always have glint
     }
 
-    private static void renderUpgrade(ItemStack stack, ResourceLocation modelLoc, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, boolean topLayer, int packedLight, int packedOverlay) {
+    private static void render(ItemStack stack, ResourceLocation modelLoc, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, boolean topLayer, int packedLight, int packedOverlay) {
         poseStack.pushPose();
 
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();

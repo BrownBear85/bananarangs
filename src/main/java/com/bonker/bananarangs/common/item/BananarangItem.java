@@ -48,7 +48,7 @@ public class BananarangItem extends Item {
 
     @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(BananarangBEWLR.EXTENSION);
+        consumer.accept(BananarangBEWLR.EXTENSION());
     }
 
     @Override

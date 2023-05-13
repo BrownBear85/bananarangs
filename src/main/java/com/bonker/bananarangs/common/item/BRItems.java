@@ -53,6 +53,8 @@ public class BRItems {
             () -> new UpgradeItem(props(), "explosive", List.of("pickaxe")));
     public static final RegistryObject<BlockItem> BANANARANG_ANVIL = ITEMS.register("bananarang_anvil",
             () -> new BlockItem(BRBlocks.BANANARANG_ANVIL.get(), props()));
+    public static final RegistryObject<TabIconItem> TAB_ICON = ITEMS.register("tab_icon",
+            () -> new TabIconItem(props()));
 
 
     public static Item.Properties props() {
@@ -63,7 +65,7 @@ public class BRItems {
     public static void registerCreativeTabs(CreativeModeTabEvent.Register event) {
         event.registerCreativeModeTab(new ResourceLocation(Bananarangs.MODID, "bananarangs"),
                 builder -> builder.title(Component.translatable("item_group." + Bananarangs.MODID + ".tab"))
-                        .icon(() -> new ItemStack(BANANARANG.get()))
+                        .icon(() -> new ItemStack(TAB_ICON.get()))
                         .noScrollBar()
                         .displayItems((parameters, populator) -> {
                             populator.accept(BANANARANG.get());

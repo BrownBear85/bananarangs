@@ -1,0 +1,7 @@
+{
+	"parent": "builtin/entity",
+	"textures": {
+		"base": "bananarangs:item/bananarang",
+		"particle": "bananarangs:item/bananarang"
+	}
+}

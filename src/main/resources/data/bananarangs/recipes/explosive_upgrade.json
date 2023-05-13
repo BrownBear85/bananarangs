@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#C#",
+    "IBI",
+    "#C#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:tnt"
+    },
+    "C": {
+      "item": "minecraft:coal_block"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "B": {
+      "item": "bananarangs:blank_upgrade"
+    }
+  },
+  "result": {
+    "item": "bananarangs:explosive_upgrade",
+    "count": 1
+  }
+}
