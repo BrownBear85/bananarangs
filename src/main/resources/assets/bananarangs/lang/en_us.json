@@ -17,7 +17,6 @@
   "item.bananarangs.sticky_upgrade": "Sticky Upgrade",
   "item.bananarangs.explosive_upgrade": "Explosive Upgrade",
 
-
   "item.bananarangs.damage_upgrade_1.description": "Damage increased by 1.5 hearts",
   "item.bananarangs.damage_upgrade_2.description": "Damage increased by 3.0 hearts",
   "item.bananarangs.damage_upgrade_3.description": "Damage increased by 4.5 hearts",
@@ -47,6 +46,7 @@
   "death.attack.explosiveBananarang.item": "%1$s went out with a bang-nana because of %2$s using %3$s",
 
   "block.bananarangs.bananarang_anvil": "Bananarang Anvil",
+  "block.bananarangs.bananarang_anvil.description": "Apply bananarang upgrades with this",
 
   "container.bananarang_anvil": "Apply Upgrades",
   "container.bananarang_anvil.place_bananarang": "Place bananarang",
