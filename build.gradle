@@ -6,7 +6,7 @@ plugins {
 
 
 group = 'com.bonker'
-version = '1.0-SNAPSHOT'
+version = '1.0'
 
 java {
     archivesBaseName = 'bananarangs'
@@ -53,6 +53,9 @@ minecraft {
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', 'bananarangs'
+
+            args '--uuid', 'e01b8592c9f542d9a734252e4ad6780b'
+            args '--username=bonker'
 
             mods {
                 bananarangs {
