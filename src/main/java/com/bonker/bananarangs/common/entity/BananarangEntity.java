@@ -4,8 +4,7 @@ import com.bonker.bananarangs.common.BRDamage;
 import com.bonker.bananarangs.common.item.BRItems;
 import static com.bonker.bananarangs.common.item.BananarangItem.*;
 
-import com.bonker.bananarangs.util.MathUtil;
-import com.google.common.collect.ImmutableList;
+import com.bonker.bananarangs.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -117,7 +116,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
 
         if (level instanceof ServerLevel serverLevel) {
             if (hasPickaxe && !isReturning()) {
-                for (BlockPos pos : MathUtil.insideHitbox(getBoundingBox())) { // for each block inside the hitbox
+                for (BlockPos pos : Util.insideHitbox(getBoundingBox())) { // for each block inside the hitbox
                     BlockState state = level.getBlockState(pos);
                     if (canMine(state, pos)) {
                         level.destroyBlock(pos, false);
@@ -229,8 +228,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
             case 3 -> 2.4F;
             default -> 1.0F;
         };
-        Vec3 pos = position().add(getDeltaMovement().multiply(0.3, 0.3, 0.3));
-        level.explode(this, createDamageSource(), null, pos.x, pos.y, pos.z, radius, flaming, Level.ExplosionInteraction.TNT, false);
+        level.explode(this, createDamageSource(), null, getX(), getY(), getZ(), radius, flaming, Level.ExplosionInteraction.TNT, false);
         setReturning(true);
     }
 
@@ -296,7 +294,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     }
 
     private void scaleDelta(double factor) {
-        setDeltaMovement(MathUtil.clamp(getDeltaMovement().multiply(factor, factor, factor), -maxSpeed, maxSpeed));
+        setDeltaMovement(Util.clamp(getDeltaMovement().multiply(factor, factor, factor), -maxSpeed, maxSpeed));
     }
 
     private void drop() {
