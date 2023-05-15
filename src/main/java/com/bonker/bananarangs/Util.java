@@ -1,4 +1,4 @@
-package com.bonker.bananarangs.util;
+package com.bonker.bananarangs;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class MathUtil {
+public class Util {
     public static double clamp(double value, double max) {
         return clamp(value, value, max);
     }
@@ -50,5 +50,10 @@ public class MathUtil {
                 }
             }
         }
+    }
+
+    @SafeVarargs
+    public static <T> List<T> listOf(T... upgrades) {
+        return new ArrayList<>(List.of(upgrades));
     }
 }

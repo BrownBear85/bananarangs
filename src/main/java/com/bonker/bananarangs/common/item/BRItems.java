@@ -14,7 +14,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.List;
+import static com.bonker.bananarangs.Util.listOf;
 
 @Mod.EventBusSubscriber(modid = Bananarangs.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class BRItems {
@@ -27,6 +27,11 @@ public class BRItems {
             () -> new BananarangItem(props().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> BLANK_UPGRADE = ITEMS.register("blank_upgrade",
             () -> new Item(props()));
+    public static final RegistryObject<BlockItem> BANANARANG_ANVIL = ITEMS.register("bananarang_anvil",
+            () -> new BlockItem(BRBlocks.BANANARANG_ANVIL.get(), props()));
+    public static final RegistryObject<TabIconItem> TAB_ICON = ITEMS.register("tab_icon",
+            () -> new TabIconItem(props()));
+
     public static final RegistryObject<UpgradeItem> DAMAGE_UPGRADE_1 = ITEMS.register("damage_upgrade_1",
             () -> new UpgradeItem(props(), "damage_1", UpgradeItem.DAMAGE_UPGRADES));
     public static final RegistryObject<UpgradeItem> DAMAGE_UPGRADE_2 = ITEMS.register("damage_upgrade_2",
@@ -50,11 +55,7 @@ public class BRItems {
     public static final RegistryObject<UpgradeItem> STICKY_UPGRADE = ITEMS.register("sticky_upgrade",
             () -> new UpgradeItem(props(), "sticky", UpgradeItem.EDGE_UPGRADES));
     public static final RegistryObject<UpgradeItem> EXPLOSIVE_UPGRADE = ITEMS.register("explosive_upgrade",
-            () -> new UpgradeItem(props(), "explosive", List.of("pickaxe")));
-    public static final RegistryObject<BlockItem> BANANARANG_ANVIL = ITEMS.register("bananarang_anvil",
-            () -> new BlockItem(BRBlocks.BANANARANG_ANVIL.get(), props()));
-    public static final RegistryObject<TabIconItem> TAB_ICON = ITEMS.register("tab_icon",
-            () -> new TabIconItem(props()));
+            () -> new UpgradeItem(props(), "explosive", listOf("pickaxe")));
 
 
     public static Item.Properties props() {

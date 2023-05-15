@@ -22,7 +22,7 @@
   "item.bananarangs.damage_upgrade_3.description": "Damage increased by 4.5 hearts",
   "item.bananarangs.flaming_upgrade.description": "Lights victims on fire",
   "item.bananarangs.fling_upgrade.description": "Launches victims in the air",
-  "item.bananarangs.piercing_upgrade.description": "Pierces through victims and their armor",
+  "item.bananarangs.piercing_upgrade.description": "Pierces through victims and their armor\nDamage reduced by 50%",
   "item.bananarangs.pickaxe_upgrade.description": "Enables pickaxe attachment and block mining",
   "item.bananarangs.power_upgrade_1.description": "Throwing power increased by 40%",
   "item.bananarangs.power_upgrade_2.description": "Throwing power increased by 80%",
@@ -34,7 +34,8 @@
   "item.bananarangs.bananarang.no_upgrade": " - Empty -",
   "item.bananarangs.bananarang.attachedItem": "Attached Item: ",
   "item.bananarangs.bananarang.damage": "Damage: ",
-  "item.bananarangs.bananarang.shift": "Press <SHIFT> for more information",
+  "item.bananarangs.shift": "Press <SHIFT> for more information",
+  "item.bananarangs.incompatible_upgrades": "Incompatible Upgrades:",
 
   "entity.bananarangs.bananarang": "Bananarang",
 

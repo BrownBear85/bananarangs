@@ -2,7 +2,6 @@ package com.bonker.bananarangs.client;
 
 import com.bonker.bananarangs.common.item.BananarangItem;
 import com.bonker.bananarangs.common.item.UpgradeItem;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
@@ -11,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import static net.minecraft.ChatFormatting.*;
 
 import java.util.List;
 
@@ -32,35 +33,44 @@ public class ClientUtil {
 
         float damage = 6.0F + 3.0F * BananarangItem.damageUpgrade(stack);
         if (BananarangItem.hasUpgrade(stack, "piercing")) damage *= 0.5;
-        tooltip.add(Component.translatable("item.bananarangs.bananarang.damage").withStyle(ChatFormatting.GRAY).append(Component.literal(Float.toString(damage)).withStyle(ChatFormatting.GOLD)));
+        tooltip.add(Component.translatable("item.bananarangs.bananarang.damage").withStyle(GRAY).append(Component.literal(Float.toString(damage)).withStyle(GOLD)));
 
         ItemStack attachedItem = BananarangItem.getAttachedItem(stack);
         if (!attachedItem.isEmpty()) {
-            tooltip.add(Component.translatable("item.bananarangs.bananarang.attachedItem").withStyle(ChatFormatting.GRAY).append(attachedItem.getDisplayName()));
+            tooltip.add(Component.translatable("item.bananarangs.bananarang.attachedItem").withStyle(GRAY).append(attachedItem.getDisplayName()));
             if (Screen.hasShiftDown()) {
                 List<Component> lines = attachedItem.getTooltipLines(null, TooltipFlag.NORMAL);
                 lines = lines.subList(1, lines.size());
                 for (Component line : lines) {
                     if (line.getContents() == ComponentContents.EMPTY) continue;
-                    tooltip.add(Component.literal("|   ").append(MutableComponent.create(line.getContents())).withStyle(ChatFormatting.GRAY));
+                    tooltip.add(Component.literal("|   ").append(MutableComponent.create(line.getContents())).withStyle(GRAY));
                 }
             }
         }
 
-        tooltip.add(Component.translatable(key0).withStyle(ChatFormatting.YELLOW));
+        tooltip.add(Component.translatable(key0).withStyle(YELLOW));
         if (slot0valid && !key0.equals("null") && Screen.hasShiftDown())
-            tooltip.add(Component.translatable(key0 + ".description").withStyle(ChatFormatting.DARK_GRAY));
+            tooltip.add(Component.translatable(key0 + ".description").withStyle(DARK_GRAY));
 
-        tooltip.add(Component.translatable(key1).withStyle(ChatFormatting.YELLOW));
+        tooltip.add(Component.translatable(key1).withStyle(YELLOW));
         if (slot1valid && !key1.equals("null") && Screen.hasShiftDown())
-            tooltip.add(Component.translatable(key1 + ".description").withStyle(ChatFormatting.DARK_GRAY));
+            tooltip.add(Component.translatable(key1 + ".description").withStyle(DARK_GRAY));
 
-        if (!Screen.hasShiftDown() && BananarangItem.isUpgraded(stack)) tooltip.add(Component.translatable("item.bananarangs.bananarang.shift").withStyle(ChatFormatting.DARK_GRAY));
+        if (!Screen.hasShiftDown() && BananarangItem.isUpgraded(stack)) tooltip.add(Component.translatable("item.bananarangs.shift").withStyle(DARK_GRAY));
     }
 
     public static void addUpgradeItemTooltip(ItemStack stack, List<Component> tooltip) {
         ResourceLocation loc = ForgeRegistries.ITEMS.getKey(stack.getItem());
         if (loc == null) return;
-        tooltip.add(Component.translatable("item.bananarangs." + loc.getPath() + ".description").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.bananarangs." + loc.getPath() + ".description").withStyle(GRAY));
+
+        if (stack.getItem() instanceof UpgradeItem upgradeItem && upgradeItem.incompatibleTooltip.size() > 0) {
+            if (Screen.hasShiftDown()) {
+                tooltip.add(Component.translatable("item.bananarangs.incompatible_upgrades").withStyle(DARK_GRAY));
+                tooltip.addAll(upgradeItem.incompatibleTooltip);
+            } else {
+                tooltip.add(Component.translatable("item.bananarangs.shift").withStyle(DARK_GRAY));
+            }
+        }
     }
 }
