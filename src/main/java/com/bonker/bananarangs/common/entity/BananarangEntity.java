@@ -90,12 +90,12 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
                             entity.stopRiding();
                             entity.setDeltaMovement(getDeltaMovement());
                         }
-                        if (player.getAbilities().instabuild || player.addItem(getItem())) {
+                        if (player.addItem(getItem())) {
                             discard();
                         } else {
                             drop();
                         }
-                        player.getCooldowns().addCooldown(BRItems.BANANARANG.get(), 10);
+                        if (!player.getAbilities().instabuild && !player.getCooldowns().isOnCooldown(BRItems.BANANARANG.get())) player.getCooldowns().addCooldown(BRItems.BANANARANG.get(), 10);
                         return;
                     }
                     drop();
