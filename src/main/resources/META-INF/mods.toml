@@ -42,7 +42,7 @@ authors="bonker" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Adds bananarangs (banana + boomerang) to Minecraft!
+Adds upgradeable bananarangs (banana + boomerang) to Minecraft!
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.bananarangs]] #optional
