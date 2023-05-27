@@ -25,6 +25,7 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -64,15 +65,19 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         super(entityType, level);
     }
 
-    public static void shootFromEntity(ServerLevel level, LivingEntity shooter, ItemStack stack) {
+    private BananarangEntity(Level level, LivingEntity shooter, ItemStack stack, double power) {
+        this(BREntities.BANANARANG.get(), level);
+        setOwner(shooter);
+        setItem(stack);
+        setPos(shooter.getEyePosition().subtract(0, HITBOX_SIZE / 2, 0));
+        setRot(shooter.getXRot(), shooter.getYRot());
+        setDeltaMovement(shooter.getLookAngle().multiply(power, power, power));
+    }
+
+    public static void shootFromEntity(Level level, LivingEntity shooter, ItemStack stack) {
         double power = 0.9 * (1 + 0.4 * powerUpgrade(stack));
-        BREntities.BANANARANG.get().spawn(level, null, (entity) -> {
-            entity.setOwner(shooter);
-            entity.setItem(stack);
-            entity.setPos(shooter.getEyePosition().subtract(0, HITBOX_SIZE / 2, 0));
-            entity.setRot(shooter.getXRot(), shooter.getYRot());
-            entity.setDeltaMovement(shooter.getLookAngle().multiply(power, power, power));
-        }, BlockPos.ZERO, MobSpawnType.COMMAND, false, false);
+        BananarangEntity entity = new BananarangEntity(level, shooter, stack, power);
+        level.addFreshEntity(entity);
     }
 
     @Override
@@ -228,7 +233,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
             case 3 -> 2.4F;
             default -> 1.0F;
         };
-        level.explode(this, createDamageSource(), null, getX(), getY(), getZ(), radius, flaming, Level.ExplosionInteraction.TNT, false);
+        level.explode(this, createDamageSource(), null, getX(), getY(), getZ(), radius, flaming, Explosion.BlockInteraction.DESTROY);
         setReturning(true);
     }
 

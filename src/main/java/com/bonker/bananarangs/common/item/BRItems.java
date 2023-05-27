@@ -2,12 +2,12 @@ package com.bonker.bananarangs.common.item;
 
 import com.bonker.bananarangs.Bananarangs;
 import com.bonker.bananarangs.common.block.BRBlocks;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
@@ -59,32 +59,38 @@ public class BRItems {
 
 
     public static Item.Properties props() {
-        return new Item.Properties();
+        return new Item.Properties().tab(TAB);
     }
 
-    @SubscribeEvent
-    public static void registerCreativeTabs(CreativeModeTabEvent.Register event) {
-        event.registerCreativeModeTab(new ResourceLocation(Bananarangs.MODID, "bananarangs"),
-                builder -> builder.title(Component.translatable("item_group." + Bananarangs.MODID + ".tab"))
-                        .icon(() -> new ItemStack(TAB_ICON.get()))
-                        .noScrollBar()
-                        .displayItems((parameters, populator, showOpItems) -> {
-                            populator.accept(BANANARANG.get());
-                            populator.accept(BANANARANG_ANVIL.get());
-                            populator.accept(DAMAGE_UPGRADE_1.get());
-                            populator.accept(DAMAGE_UPGRADE_2.get());
-                            populator.accept(DAMAGE_UPGRADE_3.get());
-                            populator.accept(POWER_UPGRADE_1.get());
-                            populator.accept(POWER_UPGRADE_2.get());
-                            populator.accept(POWER_UPGRADE_3.get());
-                            populator.accept(FLAMING_UPGRADE.get());
-                            populator.accept(STICKY_UPGRADE.get());
-                            populator.accept(PIERCING_UPGRADE.get());
-                            populator.accept(FLING_UPGRADE.get());
-                            populator.accept(PICKAXE_UPGRADE.get());
-                            populator.accept(EXPLOSIVE_UPGRADE.get());
-                            populator.accept(BANANA.get());
-                            populator.accept(BLANK_UPGRADE.get());
-                        }));
-    }
+    public static final CreativeModeTab TAB = new CreativeModeTab("bananarangs") {
+        @Override
+        public ItemStack makeIcon() {
+            return new ItemStack(TAB_ICON.get());
+        }
+
+        @Override
+        public CreativeModeTab hideScroll() {
+            return super.hideScroll();
+        }
+
+        @Override
+        public void fillItemList(NonNullList<ItemStack> pItems) {
+            pItems.add(new ItemStack(BANANARANG.get()));
+            pItems.add(new ItemStack(BANANARANG_ANVIL.get()));
+            pItems.add(new ItemStack(DAMAGE_UPGRADE_1.get()));
+            pItems.add(new ItemStack(DAMAGE_UPGRADE_2.get()));
+            pItems.add(new ItemStack(DAMAGE_UPGRADE_3.get()));
+            pItems.add(new ItemStack(POWER_UPGRADE_1.get()));
+            pItems.add(new ItemStack(POWER_UPGRADE_2.get()));
+            pItems.add(new ItemStack(POWER_UPGRADE_3.get()));
+            pItems.add(new ItemStack(FLAMING_UPGRADE.get()));
+            pItems.add(new ItemStack(STICKY_UPGRADE.get()));
+            pItems.add(new ItemStack(PIERCING_UPGRADE.get()));
+            pItems.add(new ItemStack(FLING_UPGRADE.get()));
+            pItems.add(new ItemStack(PICKAXE_UPGRADE.get()));
+            pItems.add(new ItemStack(EXPLOSIVE_UPGRADE.get()));
+            pItems.add(new ItemStack(BANANA.get()));
+            pItems.add(new ItemStack(BLANK_UPGRADE.get()));
+        }
+    };
 }

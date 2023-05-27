@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -130,13 +130,13 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
             ItemStack attachedItem = BananarangItem.getAttachedItem(stack);
             if (!attachedItem.isEmpty()) {
                 if (inGui) {
-                    poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+                    poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
                     poseStack.translate(-0.7, -0.7, 0);
                     poseStack.scale(0.7F, 0.7F, 0.7F);
                 } else {
                     poseStack.translate(0.125, 0.232, 0.531);
                     poseStack.scale(0.7F, 0.7F, 0.7F);
-                    poseStack.mulPose(Axis.ZP.rotationDegrees(90));
+                    poseStack.mulPose(Vector3f.ZP.rotationDegrees(90));
                 }
                 itemRenderer.renderStatic(attachedItem, ItemTransforms.TransformType.FIXED, packedLight, packedOverlay, poseStack, bufferSource, 42);
             }

@@ -39,7 +39,7 @@ public class ClientUtil {
         if (!attachedItem.isEmpty()) {
             tooltip.add(Component.translatable("item.bananarangs.bananarang.attachedItem").withStyle(GRAY).append(attachedItem.getDisplayName()));
             if (Screen.hasShiftDown()) {
-                List<Component> lines = attachedItem.getTooltipLines(null, TooltipFlag.NORMAL);
+                List<Component> lines = attachedItem.getTooltipLines(null, TooltipFlag.Default.NORMAL);
                 lines = lines.subList(1, lines.size());
                 for (Component line : lines) {
                     if (line.getContents() == ComponentContents.EMPTY) continue;

@@ -17,6 +17,6 @@ public class BRSounds {
     public static final RegistryObject<SoundEvent> BANANARANG_THROW = registerSound("bananarang_throw");
 
     private static RegistryObject<SoundEvent> registerSound(String name) {
-        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Bananarangs.MODID, name)));
+        return SOUND_EVENTS.register(name, () -> new SoundEvent(new ResourceLocation(Bananarangs.MODID, name)));
     }
 }
