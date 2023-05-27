@@ -68,7 +68,7 @@ public class BRItems {
                 builder -> builder.title(Component.translatable("item_group." + Bananarangs.MODID + ".tab"))
                         .icon(() -> new ItemStack(TAB_ICON.get()))
                         .noScrollBar()
-                        .displayItems((parameters, populator) -> {
+                        .displayItems((parameters, populator, showOpItems) -> {
                             populator.accept(BANANARANG.get());
                             populator.accept(BANANARANG_ANVIL.get());
                             populator.accept(DAMAGE_UPGRADE_1.get());

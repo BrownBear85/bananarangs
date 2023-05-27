@@ -4,11 +4,11 @@ import com.bonker.bananarangs.common.entity.BananarangEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.item.ItemDisplayContext;
 
 public class BananarangEntityRenderer<T extends BananarangEntity> extends ThrownItemRenderer<T> {
 
@@ -29,7 +29,7 @@ public class BananarangEntityRenderer<T extends BananarangEntity> extends Thrown
         poseStack.mulPose(Axis.XP.rotationDegrees(entity.getXRot()));         // tilt to facing rotation
         poseStack.mulPose(Axis.ZP.rotationDegrees(                            // spin!!!
                 ((entity.tickCount + partialTicks) * degreesPerTick) % 360)); // calculate spin
-        this.itemRenderer.renderStatic(entity.getItem(), ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, buffer, entity.level, entity.getId());
+        this.itemRenderer.renderStatic(entity.getItem(), ItemTransforms.TransformType.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, buffer, entity.getId());
         poseStack.popPose();
     }
 }

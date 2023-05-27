@@ -14,11 +14,11 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -64,7 +64,7 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
     }
 
     @Override
-    public void renderByItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void renderByItem(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         poseStack.popPose(); // remove translations from ItemRenderer
         poseStack.pushPose();
 
@@ -103,25 +103,25 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
         if (shouldRender1) topLayer = 1;
         if (shouldRender2) topLayer = 2;
 
-        render(stack, BASE_LOC, displayContext, poseStack, bufferSource, RenderType.solid(), topLayer == 0, packedLight, packedOverlay);
-        if (shouldRender1) render(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer1), displayContext, poseStack, bufferSource, RenderType.translucent(), topLayer == 1, packedLight, packedOverlay);
-        if (shouldRender2) render(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer2), displayContext, poseStack, bufferSource, RenderType.translucent(), topLayer == 2, packedLight, packedOverlay); // if layer 2 is valid, it will always have glint
+        render(stack, BASE_LOC, transformType, poseStack, bufferSource, RenderType.solid(), topLayer == 0, packedLight, packedOverlay);
+        if (shouldRender1) render(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer1), transformType, poseStack, bufferSource, RenderType.translucent(), topLayer == 1, packedLight, packedOverlay);
+        if (shouldRender2) render(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer2), transformType, poseStack, bufferSource, RenderType.translucent(), topLayer == 2, packedLight, packedOverlay); // if layer 2 is valid, it will always have glint
     }
 
-    private static void render(ItemStack stack, ResourceLocation modelLoc, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, boolean topLayer, int packedLight, int packedOverlay) {
+    private static void render(ItemStack stack, ResourceLocation modelLoc, ItemTransforms.TransformType transformType, PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, boolean topLayer, int packedLight, int packedOverlay) {
         poseStack.pushPose();
 
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
 
         BakedModel model = Minecraft.getInstance().getModelManager().getModel(modelLoc);
-        model = model.applyTransform(displayContext, poseStack, isLeftHand(displayContext));
+        model = model.applyTransform(transformType, poseStack, isLeftHand(transformType));
         poseStack.translate(-0.5, -0.5, -0.5); // replicate ItemRenderer translation
 
         renderType = RenderTypeHelper.getEntityRenderType(renderType, true);
         VertexConsumer vertexConsumer = ItemRenderer.getFoilBuffer(bufferSource, renderType, true, stack.hasFoil() && topLayer);
         itemRenderer.renderModelLists(model, ItemStack.EMPTY, packedLight, packedOverlay, poseStack, vertexConsumer);
 
-        boolean inGui = displayContext == ItemDisplayContext.GUI;
+        boolean inGui = transformType == ItemTransforms.TransformType.GUI;
         if (inGui) {
             Lighting.setupForFlatItems();
         }
@@ -129,7 +129,7 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
         if (topLayer) {
             ItemStack attachedItem = BananarangItem.getAttachedItem(stack);
             if (!attachedItem.isEmpty()) {
-                if (displayContext == ItemDisplayContext.GUI) {
+                if (inGui) {
                     poseStack.mulPose(Axis.ZP.rotationDegrees(180));
                     poseStack.translate(-0.7, -0.7, 0);
                     poseStack.scale(0.7F, 0.7F, 0.7F);
@@ -138,7 +138,7 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
                     poseStack.scale(0.7F, 0.7F, 0.7F);
                     poseStack.mulPose(Axis.ZP.rotationDegrees(90));
                 }
-                itemRenderer.renderStatic(attachedItem, ItemDisplayContext.FIXED, packedLight, packedOverlay, poseStack, bufferSource, null, 42);
+                itemRenderer.renderStatic(attachedItem, ItemTransforms.TransformType.FIXED, packedLight, packedOverlay, poseStack, bufferSource, 42);
             }
         }
 
@@ -150,7 +150,7 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
         poseStack.popPose();
     }
 
-    private static boolean isLeftHand(ItemDisplayContext displayContext) {
-        return displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || displayContext == ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
+    private static boolean isLeftHand(ItemTransforms.TransformType transformType) {
+        return transformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND || transformType == ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND;
     }
 }
