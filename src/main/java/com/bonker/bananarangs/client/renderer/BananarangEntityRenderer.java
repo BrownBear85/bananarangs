@@ -29,7 +29,7 @@ public class BananarangEntityRenderer<T extends BananarangEntity> extends Thrown
         poseStack.mulPose(Axis.XP.rotationDegrees(entity.getXRot()));         // tilt to facing rotation
         poseStack.mulPose(Axis.ZP.rotationDegrees(                            // spin!!!
                 ((entity.tickCount + partialTicks) * degreesPerTick) % 360)); // calculate spin
-        this.itemRenderer.renderStatic(entity.getItem(), ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, buffer, entity.level, entity.getId());
+        this.itemRenderer.renderStatic(entity.getItem(), ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY, poseStack, buffer, entity.level(), entity.getId());
         poseStack.popPose();
     }
 }

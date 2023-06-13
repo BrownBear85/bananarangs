@@ -1,6 +1,6 @@
 package com.bonker.bananarangs.common.block;
 
-import com.bonker.bananarangs.menu.BananarangAnvilMenu;
+import com.bonker.bananarangs.common.menu.BananarangAnvilMenu;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,6 +44,7 @@ public class BananarangAnvilBlock extends Block {
         super(pProperties);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (pLevel.isClientSide) {
@@ -54,12 +55,14 @@ public class BananarangAnvilBlock extends Block {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Nullable
     public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos) {
         return new SimpleMenuProvider((containerId, inventory, player) ->
                 new BananarangAnvilMenu(containerId, inventory, ContainerLevelAccess.create(pLevel, pPos)), CONTAINER_TITLE);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return pState.getValue(FACING).getAxis() == Direction.Axis.X ? SHAPE_X : SHAPE_Z;

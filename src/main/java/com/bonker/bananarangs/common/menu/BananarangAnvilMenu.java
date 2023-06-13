@@ -1,11 +1,10 @@
-package com.bonker.bananarangs.menu;
+package com.bonker.bananarangs.common.menu;
 
 import com.bonker.bananarangs.common.BRSounds;
 import com.bonker.bananarangs.common.block.BRBlocks;
 import com.bonker.bananarangs.common.item.BRItems;
 import com.bonker.bananarangs.common.item.BananarangItem;
 import com.bonker.bananarangs.common.item.UpgradeItem;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
@@ -33,8 +32,8 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
     private final Container container = new SimpleContainer(ANVIL_INVENTORY_SLOT_COUNT + VANILLA_SLOT_COUNT);
     private boolean changedNBT = false;
 
-    public static BananarangAnvilMenu create(int containerId, Inventory inventory, FriendlyByteBuf buf) {
-        return new BananarangAnvilMenu(containerId, inventory, ContainerLevelAccess.NULL /*ContainerLevelAccess.create(inventory.player.level, buf.readBlockPos())*/);
+    public static BananarangAnvilMenu create(int containerId, Inventory inventory) {
+        return new BananarangAnvilMenu(containerId, inventory, ContainerLevelAccess.NULL);
     }
 
     public BananarangAnvilMenu(int containerId, Inventory inventory, ContainerLevelAccess access) {
@@ -222,8 +221,6 @@ public class BananarangAnvilMenu extends AbstractContainerMenu {
     }
 
     private void playSound(SoundEvent sound, float pitch) {
-        access.execute((level, pos) -> {
-            level.playSound(null, pos, sound, SoundSource.BLOCKS, 1.0F, pitch);
-        });
+        access.execute((level, pos) -> level.playSound(null, pos, sound, SoundSource.BLOCKS, 1.0F, pitch));
     }
 }

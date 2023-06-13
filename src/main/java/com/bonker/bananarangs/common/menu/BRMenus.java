@@ -1,4 +1,4 @@
-package com.bonker.bananarangs.menu;
+package com.bonker.bananarangs.common.menu;
 
 import com.bonker.bananarangs.Bananarangs;
 import net.minecraft.world.inventory.MenuType;
@@ -11,5 +11,5 @@ public class BRMenus {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, Bananarangs.MODID);
 
     public static final RegistryObject<MenuType<BananarangAnvilMenu>> BANANARANG_ANVIL = MENUS.register("bananarang_anvil",
-            () -> IForgeMenuType.create(BananarangAnvilMenu::create));
+            () -> IForgeMenuType.create(((windowId, inv, data) -> BananarangAnvilMenu.create(windowId, inv))));
 }

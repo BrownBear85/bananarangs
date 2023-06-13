@@ -2,24 +2,19 @@ package com.bonker.bananarangs.common.item;
 
 import com.bonker.bananarangs.Bananarangs;
 import com.bonker.bananarangs.common.block.BRBlocks;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.CreativeModeTabEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import static com.bonker.bananarangs.Util.listOf;
 
-@Mod.EventBusSubscriber(modid = Bananarangs.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class BRItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Bananarangs.MODID);
-
+    public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB.location(), Bananarangs.MODID);
 
     public static final RegistryObject<Item> BANANA = ITEMS.register("banana",
             () -> new Item(props().food(new FoodProperties.Builder().nutrition(4).saturationMod(0.5F).build())));
@@ -57,34 +52,32 @@ public class BRItems {
     public static final RegistryObject<UpgradeItem> EXPLOSIVE_UPGRADE = ITEMS.register("explosive_upgrade",
             () -> new UpgradeItem(props(), "explosive", listOf("pickaxe")));
 
-
     public static Item.Properties props() {
         return new Item.Properties();
     }
 
-    @SubscribeEvent
-    public static void registerCreativeTabs(CreativeModeTabEvent.Register event) {
-        event.registerCreativeModeTab(new ResourceLocation(Bananarangs.MODID, "bananarangs"),
-                builder -> builder.title(Component.translatable("item_group." + Bananarangs.MODID + ".tab"))
-                        .icon(() -> new ItemStack(TAB_ICON.get()))
-                        .noScrollBar()
-                        .displayItems((parameters, populator) -> {
-                            populator.accept(BANANARANG.get());
-                            populator.accept(BANANARANG_ANVIL.get());
-                            populator.accept(DAMAGE_UPGRADE_1.get());
-                            populator.accept(DAMAGE_UPGRADE_2.get());
-                            populator.accept(DAMAGE_UPGRADE_3.get());
-                            populator.accept(POWER_UPGRADE_1.get());
-                            populator.accept(POWER_UPGRADE_2.get());
-                            populator.accept(POWER_UPGRADE_3.get());
-                            populator.accept(FLAMING_UPGRADE.get());
-                            populator.accept(STICKY_UPGRADE.get());
-                            populator.accept(PIERCING_UPGRADE.get());
-                            populator.accept(FLING_UPGRADE.get());
-                            populator.accept(PICKAXE_UPGRADE.get());
-                            populator.accept(EXPLOSIVE_UPGRADE.get());
-                            populator.accept(BANANA.get());
-                            populator.accept(BLANK_UPGRADE.get());
-                        }));
-    }
+    public static final RegistryObject<CreativeModeTab> TAB = TABS.register("bananarangs",
+            () -> CreativeModeTab.builder()
+                    .title(Component.translatable("item_group." + Bananarangs.MODID + ".tab"))
+                    .icon(() -> new ItemStack(TAB_ICON.get()))
+                    .noScrollBar()
+                    .displayItems((parameters, populator) -> {
+                        populator.accept(BANANARANG.get());
+                        populator.accept(BANANARANG_ANVIL.get());
+                        populator.accept(DAMAGE_UPGRADE_1.get());
+                        populator.accept(DAMAGE_UPGRADE_2.get());
+                        populator.accept(DAMAGE_UPGRADE_3.get());
+                        populator.accept(POWER_UPGRADE_1.get());
+                        populator.accept(POWER_UPGRADE_2.get());
+                        populator.accept(POWER_UPGRADE_3.get());
+                        populator.accept(FLAMING_UPGRADE.get());
+                        populator.accept(STICKY_UPGRADE.get());
+                        populator.accept(PIERCING_UPGRADE.get());
+                        populator.accept(FLING_UPGRADE.get());
+                        populator.accept(PICKAXE_UPGRADE.get());
+                        populator.accept(EXPLOSIVE_UPGRADE.get());
+                        populator.accept(BANANA.get());
+                        populator.accept(BLANK_UPGRADE.get());
+                    })
+                    .build());
 }

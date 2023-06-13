@@ -28,7 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -114,13 +114,13 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         Vec3 posOld = position();
         setPos(posOld.add(getDeltaMovement()));
 
-        if (level instanceof ServerLevel serverLevel) {
+        if (level() instanceof ServerLevel serverLevel) {
             if (hasPickaxe && !isReturning()) {
                 for (BlockPos pos : Util.insideHitbox(getBoundingBox())) { // for each block inside the hitbox
-                    BlockState state = level.getBlockState(pos);
+                    BlockState state = level().getBlockState(pos);
                     if (canMine(state, pos)) {
-                        level.destroyBlock(pos, false);
-                        if ((owner instanceof Player player && !player.getAbilities().instabuild) && attachedItem.hurt(1, level.random, null)) {
+                        level().destroyBlock(pos, false);
+                        if ((owner instanceof Player player && !player.getAbilities().instabuild) && attachedItem.hurt(1, level().random, null)) {
                             attachedItem.shrink(1);
                             attachedItem.setDamageValue(0);
                             playSound(SoundEvents.ITEM_BREAK);
@@ -129,17 +129,17 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
                         }
                         updateAttachedItem();
 
-                        LootContext.Builder contextBuilder = new LootContext.Builder(serverLevel).withRandom(level.random)
+                        LootParams.Builder contextBuilder = new LootParams.Builder(serverLevel)
                                 .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
                                 .withParameter(LootContextParams.BLOCK_STATE, state)
                                 .withParameter(LootContextParams.TOOL, attachedItem);
                         for (ItemStack drop : state.getDrops(contextBuilder)) {
-                            Block.popResource(level, pos, drop);
+                            Block.popResource(level(), pos, drop);
                         }
                         state.spawnAfterBreak(serverLevel, pos, ItemStack.EMPTY, true);
 
                         scaleDelta(Math.max(0, 1 -                        // this is a fraction. a "default block" is stone block (1.5 destroy time)
-                                state.getDestroySpeed(level, pos) / 1.5 / // how many "default blocks' worth" of destroy time have you used
+                                state.getDestroySpeed(level(), pos) / 1.5 / // how many "default blocks' worth" of destroy time have you used
                                         (pickaxeEfficiency + 1)));        // the total amount of "default blocks" you can destroy (1 block with no eff. and 6 with eff. 5)
                     }
                     updateReturning();
@@ -147,7 +147,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
             }
         }
 
-        HitResult hitResult = ProjectileUtil.getHitResult(this, this::canHitEntity);
+        HitResult hitResult = ProjectileUtil.getHitResultOnViewVector(this, this::canHitEntity, 1);
         if (hitResult.getType() != HitResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, hitResult)) {
             onHit(hitResult);
         }
@@ -156,7 +156,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
         move(MoverType.SELF, getDeltaMovement());
 
         if (sticky) {
-            stuckEntities.addAll(level.getEntities(EntityType.ITEM, getBoundingBox().inflate(2), e -> true));
+            stuckEntities.addAll(level().getEntities(EntityType.ITEM, getBoundingBox().inflate(2), e -> true));
             for (int i = 0; i < stuckEntities.size(); i++) {
                 Entity entity = stuckEntities.get(i);
                 if (entity.distanceToSqr(this) > 16) {
@@ -167,7 +167,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
                     entity.startRiding(this, true);
                 }
                 for (int j = 0; j < 4; j++) {
-                    level.addParticle(ParticleTypes.ITEM_SLIME, getX(), getY(), getZ(), level.random.nextFloat() * 0.1, level.random.nextFloat() * 0.1, level.random.nextFloat() * 0.1);
+                    level().addParticle(ParticleTypes.ITEM_SLIME, getX(), getY(), getZ(), level().random.nextFloat() * 0.1, level().random.nextFloat() * 0.1, level().random.nextFloat() * 0.1);
                 }
             }
         }
@@ -218,8 +218,8 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     }
 
     private void explode() {
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.playSeededSound(null, getX(), getY(), getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 0.4F, 0.8F + level.random.nextFloat() * 0.3F, 42L);
+        if (level() instanceof ServerLevel serverLevel) {
+            serverLevel.playSeededSound(null, getX(), getY(), getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 0.4F, 0.8F + level().random.nextFloat() * 0.3F, 42L);
             serverLevel.sendParticles(ParticleTypes.EXPLOSION, getX(), getY(), getZ(), 5, 1.5, 1.5, 1.5, 0);
         }
         float radius = switch (damageUpgrade) {
@@ -228,7 +228,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
             case 3 -> 2.4F;
             default -> 1.0F;
         };
-        level.explode(this, createDamageSource(), null, getX(), getY(), getZ(), radius, flaming, Level.ExplosionInteraction.TNT, false);
+        level().explode(this, createDamageSource(), null, getX(), getY(), getZ(), radius, flaming, Level.ExplosionInteraction.TNT, false);
         setReturning(true);
     }
 
@@ -270,7 +270,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
 
     private boolean canMine(BlockState state, BlockPos pos) {
         if (attachedItem.getItem() instanceof DiggerItem diggerItem) {
-            double destroySpeed = state.getDestroySpeed(level, pos);
+            double destroySpeed = state.getDestroySpeed(level(), pos);
             return destroySpeed >= 0 && // can't break unbreakable blocks with strength -1
                     state.getBlock().hasCollision && // can't break blocks it can't collide with
                     TierSortingRegistry.isCorrectTierForDrops(diggerItem.getTier(), state) && // can't break blocks that its tool can't mine
@@ -298,7 +298,7 @@ public class BananarangEntity extends Projectile implements ItemSupplier {
     }
 
     private void drop() {
-        if (!level.isClientSide) {
+        if (!level().isClientSide) {
             spawnAtLocation(getItem());
         }
         discard();

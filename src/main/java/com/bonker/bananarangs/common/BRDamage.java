@@ -20,7 +20,7 @@ public class BRDamage {
 
     public static class BananarangDamageSource extends DamageSource {
         public BananarangDamageSource(BRDamage.Type type, BananarangEntity direct, @Nullable Entity thrower) {
-            super(direct.level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+            super(direct.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                     .getHolderOrThrow(type.get()), direct, thrower);
         }
 

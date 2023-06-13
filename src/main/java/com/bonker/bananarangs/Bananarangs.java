@@ -5,7 +5,7 @@ import com.bonker.bananarangs.common.block.BRBlocks;
 import com.bonker.bananarangs.common.entity.BREntities;
 import com.bonker.bananarangs.common.item.BRItems;
 import com.bonker.bananarangs.common.item.UpgradeItem;
-import com.bonker.bananarangs.menu.BRMenus;
+import com.bonker.bananarangs.common.menu.BRMenus;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -24,6 +24,7 @@ public class Bananarangs {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         BRItems.ITEMS.register(bus);
+        BRItems.TABS.register(bus);
         BRBlocks.BLOCKS.register(bus);
         BREntities.ENTITY_TYPES.register(bus);
         BRMenus.MENUS.register(bus);

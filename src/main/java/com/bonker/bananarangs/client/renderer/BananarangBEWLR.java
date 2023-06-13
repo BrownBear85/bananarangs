@@ -105,7 +105,7 @@ public class BananarangBEWLR extends BlockEntityWithoutLevelRenderer {
 
         render(stack, BASE_LOC, displayContext, poseStack, bufferSource, RenderType.solid(), topLayer == 0, packedLight, packedOverlay);
         if (shouldRender1) render(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer1), displayContext, poseStack, bufferSource, RenderType.translucent(), topLayer == 1, packedLight, packedOverlay);
-        if (shouldRender2) render(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer2), displayContext, poseStack, bufferSource, RenderType.translucent(), topLayer == 2, packedLight, packedOverlay); // if layer 2 is valid, it will always have glint
+        if (shouldRender2) render(stack, UpgradeItem.UPGRADE_MODEL_MAP.get(layer2), displayContext, poseStack, bufferSource, RenderType.translucent(), true, packedLight, packedOverlay); // if layer 2 is valid, it will always have glint
     }
 
     private static void render(ItemStack stack, ResourceLocation modelLoc, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, RenderType renderType, boolean topLayer, int packedLight, int packedOverlay) {
